@@ -1,15 +1,16 @@
 package entities;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name="cars")
-public class Car implements Comparable<Car> {
+@Table(name = "cars_unique")
+public class CarUnique implements Comparable<CarUnique> {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "CAR_UNIQUE_ID")
+    private int CAR_UNIQUE_ID;
     @Column(name = "CAR_ID")
     private int CAR_ID;
     @Column(name = "YEAR_START")
@@ -25,29 +26,77 @@ public class Car implements Comparable<Car> {
     @Column(name = "CAR_DRIVE")
     private String CAR_DRIVE;
 
+    @OneToMany
+    @JoinTable(name = "cars_unique_link",
+            joinColumns = @JoinColumn(name = "CAR_UNIQUE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "CAR_ID"))
 
-    @ManyToMany
-    @JoinTable(name = "car_attributes_link",
-            joinColumns = @JoinColumn(name = "CAR_ID"),
-            inverseJoinColumns = @JoinColumn(name = "CAR_ATT_ID"))
-    private List<CarAttribute> carAttributeList;
+    private List<CarUnique> carUniqueList;
 
-    @OneToOne
-    @JoinColumn(name = "CAR_ID")
-    private Fitment carFitment;
-
-    public Car() {
+    public List<CarUnique> getCarUniqueList() {
+        return carUniqueList;
     }
 
-    public Car(int YEAR_START, int YEAR_FINISH, String CAR_MAKE,
-               String CAR_MODEL, String CAR_SUBMODEL, String CAR_DRIVE) {
+    public void setCarUniqueList(List<CarUnique> carUniqueList) {
+        this.carUniqueList = carUniqueList;
+    }
 
+
+ /*   @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CarUnique other = (CarUnique) obj;
+        if (CAR_ID == 0) {
+            if (other.getCAR_ID() != 0)
+                return false;
+        } else if (!CAR_MAKE.equals(other.CAR_MAKE))
+            return false;
+     else if (!CAR_MODEL.equals(other.CAR_MODEL))
+            return false;
+ else if (!CAR_DRIVE.equals(other.CAR_DRIVE))
+        return false;
+         else if (!CAR_SUBMODEL.equals(other.CAR_SUBMODEL))
+        return false;
+        return true;
+    }*/
+
+    public CarUnique() {
+    }
+
+    public CarUnique(int CAR_ID, int YEAR_START, int YEAR_FINISH, String CAR_MAKE,
+                     String CAR_MODEL, String CAR_SUBMODEL, String CAR_DRIVE) {
+
+        this.CAR_ID = CAR_ID;
         this.YEAR_START = YEAR_START;
         this.YEAR_FINISH = YEAR_FINISH;
         this.CAR_MAKE = CAR_MAKE;
         this.CAR_MODEL = CAR_MODEL;
         this.CAR_SUBMODEL = CAR_SUBMODEL;
         this.CAR_DRIVE = CAR_DRIVE;
+    }
+
+    public CarUnique(Car car) {
+        this.CAR_ID = car.getCAR_ID();
+        this.YEAR_START = car.getYEAR_START();
+        this.YEAR_FINISH = car.getYEAR_FINISH();
+        this.CAR_MAKE = car.getCAR_MAKE();
+        this.CAR_MODEL = car.getCAR_MODEL();
+        this.CAR_SUBMODEL = car.getCAR_SUBMODEL();
+        this.CAR_DRIVE = car.getCAR_DRIVE();
+    }
+
+
+    public int getCAR_UNIQUE_ID() {
+        return CAR_UNIQUE_ID;
+    }
+
+    public void setCAR_UNIQUE_ID(int CAR_UNIQUE_ID) {
+        this.CAR_UNIQUE_ID = CAR_UNIQUE_ID;
     }
 
     public int getCAR_ID() {
@@ -107,18 +156,9 @@ public class Car implements Comparable<Car> {
     }
 
 
-    public List<CarAttribute> getCarAttributeList() {
-        return carAttributeList;
-    }
-
-    public void setCarAttributeList(List<CarAttribute> carAttributeList) {
-        this.carAttributeList = carAttributeList;
-    }
-
-
     @Override
     public String toString() {
-        return "\r\n" +  "Car{" +
+        return "\r\n" + "CarUnique{" +
                 "CAR_ID=" + CAR_ID + " ... "
                 /*", YEAR_START=" */ + YEAR_START + "-"
                 /*", YEAR_FINISH="*/ + YEAR_FINISH + " "
@@ -134,9 +174,8 @@ public class Car implements Comparable<Car> {
     }
 
 
-    public List<Car> getAllCArsFromDb() {
-
-        List<Car> carsList = new List<Car>() {
+    public List<CarUnique> getAllCArsFromDb() {
+        List<CarUnique> carsList = new List<CarUnique>() {
             @Override
             public int size() {
                 return 0;
@@ -153,7 +192,7 @@ public class Car implements Comparable<Car> {
             }
 
             @Override
-            public Iterator<Car> iterator() {
+            public Iterator<CarUnique> iterator() {
                 return null;
             }
 
@@ -168,7 +207,7 @@ public class Car implements Comparable<Car> {
             }
 
             @Override
-            public boolean add(Car car) {
+            public boolean add(CarUnique car) {
                 return false;
             }
 
@@ -183,12 +222,12 @@ public class Car implements Comparable<Car> {
             }
 
             @Override
-            public boolean addAll(Collection<? extends Car> c) {
+            public boolean addAll(Collection<? extends CarUnique> c) {
                 return false;
             }
 
             @Override
-            public boolean addAll(int index, Collection<? extends Car> c) {
+            public boolean addAll(int index, Collection<? extends CarUnique> c) {
                 return false;
             }
 
@@ -208,22 +247,22 @@ public class Car implements Comparable<Car> {
             }
 
             @Override
-            public Car get(int index) {
+            public CarUnique get(int index) {
                 return null;
             }
 
             @Override
-            public Car set(int index, Car element) {
+            public CarUnique set(int index, CarUnique element) {
                 return null;
             }
 
             @Override
-            public void add(int index, Car element) {
+            public void add(int index, CarUnique element) {
 
             }
 
             @Override
-            public Car remove(int index) {
+            public CarUnique remove(int index) {
                 return null;
             }
 
@@ -238,31 +277,29 @@ public class Car implements Comparable<Car> {
             }
 
             @Override
-            public ListIterator<Car> listIterator() {
+            public ListIterator<CarUnique> listIterator() {
                 return null;
             }
 
             @Override
-            public ListIterator<Car> listIterator(int index) {
+            public ListIterator<CarUnique> listIterator(int index) {
                 return null;
             }
 
             @Override
-            public List<Car> subList(int fromIndex, int toIndex) {
+            public List<CarUnique> subList(int fromIndex, int toIndex) {
                 return null;
             }
         };
-
-
         return carsList;
     }
 
 
-    public void carCompare(Car car1, Car car2) {
+    public void carCompare(CarUnique car1, CarUnique car2) {
 
     }
 
-    public ArrayList<Integer> carCompareToList(List<Car> listOfCars) {
+    public ArrayList<Integer> carCompareToList(List<CarUnique> listOfCars) {
 
         ArrayList<Integer> CAR_ID_LIST = new ArrayList<Integer>() {
             @Override
@@ -383,7 +420,7 @@ public class Car implements Comparable<Car> {
 
         CAR_ID_LIST.add(1);
 
-        for (Car carFromList : listOfCars) {
+        for (CarUnique carFromList : listOfCars) {
             System.out.println("this.YEAR_START = " + this.YEAR_START + " ... carFromList.YEAR_START = " + carFromList.YEAR_START);
             if (this.YEAR_START == carFromList.YEAR_START)
 
@@ -398,7 +435,7 @@ public class Car implements Comparable<Car> {
     }
 
     @Override
-    public int compareTo(Car o) {
+    public int compareTo(CarUnique o) {
 
         int result = this.CAR_DRIVE.length() - o.CAR_DRIVE.length();
         System.out.println("\r\n Comparison result = " + result);
@@ -415,14 +452,20 @@ public class Car implements Comparable<Car> {
             return false;
         }
 
-        Car newCar = (Car) o;
+        CarUnique newCar = (CarUnique) o;
 
         return YEAR_START == newCar.YEAR_START &&
                 YEAR_FINISH == newCar.YEAR_FINISH &&
-                CAR_MAKE.equals(newCar.CAR_MAKE)&&
-                CAR_MODEL.equals(newCar.CAR_MODEL)&&
-                CAR_SUBMODEL.equals(newCar.CAR_SUBMODEL)&&
+                CAR_MAKE.equals(newCar.CAR_MAKE) &&
+                CAR_MODEL.equals(newCar.CAR_MODEL) &&
+                CAR_SUBMODEL.equals(newCar.CAR_SUBMODEL) &&
                 CAR_DRIVE.equals(newCar.CAR_DRIVE);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return CAR_SUBMODEL.hashCode();
     }
 
 }

@@ -17,7 +17,6 @@ public class connectionTest {
 
         Session session = factory.getCurrentSession();
 
-
         try {
             session.beginTransaction();
 

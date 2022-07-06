@@ -11,8 +11,8 @@ public class CarUnique implements Comparable<CarUnique> {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "CAR_UNIQUE_ID")
     private int CAR_UNIQUE_ID;
-    @Column(name = "CAR_ID")
-    private int CAR_ID;
+    /*@Column(name = "CAR_ID")
+    private int CAR_ID;*/
     @Column(name = "YEAR_START")
     private int YEAR_START;
     @Column(name = "YEAR_FINISH")
@@ -26,21 +26,31 @@ public class CarUnique implements Comparable<CarUnique> {
     @Column(name = "CAR_DRIVE")
     private String CAR_DRIVE;
 
-    @OneToMany
-    @JoinTable(name = "cars_unique_link",
-            joinColumns = @JoinColumn(name = "CAR_UNIQUE_ID"),
-            inverseJoinColumns = @JoinColumn(name = "CAR_ID"))
+   /* private int CAR_ID;
+    public int getCAR_ID() {
+        return CAR_ID;
+    }
+    public void setCAR_ID(int CAR_ID) {
+        this.CAR_ID = CAR_ID;
+    }*/
 
-    private List<CarUnique> carUniqueList;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "CAR_ID")
+    private List<Car> carsList = new ArrayList<Car>();
 
-    public List<CarUnique> getCarUniqueList() {
-        return carUniqueList;
+    public List<Car> getCarsList() {
+        return carsList;
+    }
+    public void setCarsList(List<Car> carsList) {
+        this.carsList = carsList;
     }
 
+    /*public List<CarUnique> getCarUniqueList() {
+        return carUniqueList;
+    }
     public void setCarUniqueList(List<CarUnique> carUniqueList) {
         this.carUniqueList = carUniqueList;
     }
-
+*/
 
  /*   @Override
     public boolean equals(Object obj) {
@@ -71,7 +81,7 @@ public class CarUnique implements Comparable<CarUnique> {
     public CarUnique(int CAR_ID, int YEAR_START, int YEAR_FINISH, String CAR_MAKE,
                      String CAR_MODEL, String CAR_SUBMODEL, String CAR_DRIVE) {
 
-        this.CAR_ID = CAR_ID;
+      //  this.CAR_ID = CAR_ID;
         this.YEAR_START = YEAR_START;
         this.YEAR_FINISH = YEAR_FINISH;
         this.CAR_MAKE = CAR_MAKE;
@@ -81,7 +91,7 @@ public class CarUnique implements Comparable<CarUnique> {
     }
 
     public CarUnique(Car car) {
-        this.CAR_ID = car.getCAR_ID();
+        //this.CAR_ID = car.getCAR_ID();
         this.YEAR_START = car.getYEAR_START();
         this.YEAR_FINISH = car.getYEAR_FINISH();
         this.CAR_MAKE = car.getCAR_MAKE();
@@ -97,14 +107,6 @@ public class CarUnique implements Comparable<CarUnique> {
 
     public void setCAR_UNIQUE_ID(int CAR_UNIQUE_ID) {
         this.CAR_UNIQUE_ID = CAR_UNIQUE_ID;
-    }
-
-    public int getCAR_ID() {
-        return CAR_ID;
-    }
-
-    public void setCAR_ID(int CAR_ID) {
-        this.CAR_ID = CAR_ID;
     }
 
     public int getYEAR_START() {
@@ -155,11 +157,10 @@ public class CarUnique implements Comparable<CarUnique> {
         this.CAR_DRIVE = CAR_DRIVE;
     }
 
-
     @Override
     public String toString() {
         return "\r\n" + "CarUnique{" +
-                "CAR_ID=" + CAR_ID + " ... "
+             //   "CAR_ID=" + CAR_ID + " ... "
                 /*", YEAR_START=" */ + YEAR_START + "-"
                 /*", YEAR_FINISH="*/ + YEAR_FINISH + " "
                 /*", CAR_MAKE='"*/ + CAR_MAKE + '\'' + " "
@@ -294,7 +295,6 @@ public class CarUnique implements Comparable<CarUnique> {
         return carsList;
     }
 
-
     public void carCompare(CarUnique car1, CarUnique car2) {
 
     }
@@ -421,13 +421,13 @@ public class CarUnique implements Comparable<CarUnique> {
         CAR_ID_LIST.add(1);
 
         for (CarUnique carFromList : listOfCars) {
-            System.out.println("this.YEAR_START = " + this.YEAR_START + " ... carFromList.YEAR_START = " + carFromList.YEAR_START);
+          //  System.out.println("this.YEAR_START = " + this.YEAR_START + " ... carFromList.YEAR_START = " + carFromList.YEAR_START);
             if (this.YEAR_START == carFromList.YEAR_START)
 
            /* & (this.YEAR_FINISH == carFromList.YEAR_FINISH)
             & (this.CAR_MAKE == carFromList.CAR_MAKE)
             & (this.CAR_MODEL == carFromList.CAR_MODEL)            ) */ {
-                CAR_ID_LIST.add(carFromList.CAR_ID);
+             //   CAR_ID_LIST.add(carFromList.CAR_ID);
             }
         }
 
@@ -437,8 +437,12 @@ public class CarUnique implements Comparable<CarUnique> {
     @Override
     public int compareTo(CarUnique o) {
 
-        int result = this.CAR_DRIVE.length() - o.CAR_DRIVE.length();
-        System.out.println("\r\n Comparison result = " + result);
+        int result = this.CAR_DRIVE.length() - o.CAR_DRIVE.length()
+                + this.CAR_MAKE.length() - o.CAR_MAKE.length()
+                + this.CAR_MODEL.length() - o.CAR_MODEL.length()
+                + this.YEAR_START - o.YEAR_START
+                + this.YEAR_FINISH - o.YEAR_FINISH ;
+        // System.out.println("\r\n Comparison result = " + result);
 
         return result;
     }
@@ -464,7 +468,6 @@ public class CarUnique implements Comparable<CarUnique> {
 
     @Override
     public int hashCode() {
-
         return CAR_SUBMODEL.hashCode();
     }
 

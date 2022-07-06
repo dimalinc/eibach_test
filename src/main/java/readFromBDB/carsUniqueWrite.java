@@ -30,26 +30,26 @@ public class carsUniqueWrite {
 
         List<Car> allCarsList;
 
-        HashSet<CarUniqueObjectWoID> hashSetcarUniqueObjectWoID = new HashSet<>();
-
         try {
 
             int n=0;
-
             session.getTransaction().begin();
 
             allCarsList =
                     session.createQuery("SELECT a FROM Car a", Car.class).getResultList();
 
-            for (Car car : allCarsList) {
+            System.out.println("First car from allcarList = " + allCarsList.get(0));
 
+
+            for (Car car : allCarsList) {
                 CarUnique carUnique = new CarUnique(car);
                 carUniqueHashSet.add(carUnique);
-                System.out.println(carUnique + " added to HashSet");
+              //  System.out.println(carUnique + " added to HashSet");
+              //  car.setCAR_UNIQUE_ID(carUnique.getCAR_UNIQUE_ID());
+                session.persist(car);
             }
 
-        /*    System.out.println("hashSetcarUniqueObjectWoID.size()" + hashSetcarUniqueObjectWoID.size());
-
+        /*  System.out.println("hashSetcarUniqueObjectWoID.size()" + hashSetcarUniqueObjectWoID.size());
             for(CarUniqueObjectWoID carUniqueObjectWoID: hashSetcarUniqueObjectWoID)
             carUniqueArrayList.add(new CarUnique(n++,carUniqueObjectWoID.getYEAR_START(),carUniqueObjectWoID.getYEAR_FINISH(),carUniqueObjectWoID.getCAR_MAKE(),carUniqueObjectWoID.getCAR_MODEL(),carUniqueObjectWoID.getCAR_SUBMODEL(),carUniqueObjectWoID.getCAR_DRIVE()));
 */
@@ -58,14 +58,15 @@ public class carsUniqueWrite {
 
             session = getSessionFactory().getCurrentSession();
             session.getTransaction().begin();
+
             for (CarUnique carUnique : carUniqueHashSet) {
-              //  System.out.println(carUnique + "saving");
+             //   System.out.println(carUnique + "saving");
                 session.persist(carUnique);
             }
+            System.out.println("carUnique list length = " + carUniqueHashSet.size());
 
             session.getTransaction().commit();
             session.close();
-
 
         } catch (Exception exc) {
             exc.printStackTrace();

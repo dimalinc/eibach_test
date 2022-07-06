@@ -25,6 +25,25 @@ public class Car implements Comparable<Car> {
     @Column(name = "CAR_DRIVE")
     private String CAR_DRIVE;
 
+    @ManyToOne
+    @JoinColumn(name = "CAR_UNIQUE_ID")
+    private CarUnique carUnique;
+
+    public CarUnique getCarUnique() {
+        return carUnique;
+    }
+    public void setCarUnique(CarUnique carUnique) {
+        this.carUnique = carUnique;
+    }
+
+  /*  public int getCAR_UNIQUE_ID() {
+        return CAR_UNIQUE_ID;
+    }
+
+    public void setCAR_UNIQUE_ID(int CAR_UNIQUE_ID) {
+        this.CAR_UNIQUE_ID = CAR_UNIQUE_ID;
+    }*/
+
 
     @ManyToMany
     @JoinTable(name = "car_attributes_link",
@@ -36,11 +55,18 @@ public class Car implements Comparable<Car> {
     @JoinColumn(name = "CAR_ID")
     private Fitment carFitment;
 
+    public void setCarFitment(Fitment carFitment) {
+        this.carFitment = carFitment;
+    }
+    public Fitment getCarFitment() {
+        return carFitment;
+    }
+
     public Car() {
     }
 
     public Car(int YEAR_START, int YEAR_FINISH, String CAR_MAKE,
-               String CAR_MODEL, String CAR_SUBMODEL, String CAR_DRIVE) {
+               String CAR_MODEL, String CAR_SUBMODEL, String CAR_DRIVE, int CAR_UNIQUE_ID) {
 
         this.YEAR_START = YEAR_START;
         this.YEAR_FINISH = YEAR_FINISH;
@@ -48,6 +74,7 @@ public class Car implements Comparable<Car> {
         this.CAR_MODEL = CAR_MODEL;
         this.CAR_SUBMODEL = CAR_SUBMODEL;
         this.CAR_DRIVE = CAR_DRIVE;
+      //  this.CAR_UNIQUE_ID = CAR_UNIQUE_ID;
     }
 
     public int getCAR_ID() {
@@ -115,10 +142,10 @@ public class Car implements Comparable<Car> {
         this.carAttributeList = carAttributeList;
     }
 
-
     @Override
     public String toString() {
         return "\r\n" +  "Car{" +
+               // "CAR_UNIQUE_ID=" + CAR_UNIQUE_ID + " ... " +
                 "CAR_ID=" + CAR_ID + " ... "
                 /*", YEAR_START=" */ + YEAR_START + "-"
                 /*", YEAR_FINISH="*/ + YEAR_FINISH + " "
@@ -256,7 +283,6 @@ public class Car implements Comparable<Car> {
 
         return carsList;
     }
-
 
     public void carCompare(Car car1, Car car2) {
 
@@ -400,8 +426,12 @@ public class Car implements Comparable<Car> {
     @Override
     public int compareTo(Car o) {
 
-        int result = this.CAR_DRIVE.length() - o.CAR_DRIVE.length();
-        System.out.println("\r\n Comparison result = " + result);
+        int result = this.CAR_DRIVE.length() - o.CAR_DRIVE.length()
+                + this.CAR_MAKE.length() - o.CAR_MAKE.length()
+                + this.CAR_MODEL.length() - o.CAR_MODEL.length()
+                + this.YEAR_START - o.YEAR_START
+                + this.YEAR_FINISH - o.YEAR_FINISH ;
+      //  System.out.println("\r\n Comparison result = " + result);
 
         return result;
     }

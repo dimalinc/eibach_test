@@ -5,7 +5,7 @@ import java.util.List;
 
 @Entity
 @Table(name="fitment_attributes")
-public class FitmentAttributes {
+public class FitmentAttribute {
 
     @Id
     @Column(name="FIT_ATT_ID")
@@ -29,5 +29,37 @@ public class FitmentAttributes {
                 ", FIT_ATT_VALUE='" + FIT_ATT_VALUE + '\'' +
                 /*", fitmentsList=" + fitmentsList +*/
                 '}';
+    }
+
+    public int getFIT_ATT_ID() {
+        return FIT_ATT_ID;
+    }
+
+    public void setFIT_ATT_ID(int FIT_ATT_ID) {
+        this.FIT_ATT_ID = FIT_ATT_ID;
+    }
+
+    public String getFIT_ATT_NAME() {
+        return FIT_ATT_NAME;
+    }
+
+    public void setFIT_ATT_NAME(String FIT_ATT_NAME) {
+        this.FIT_ATT_NAME = FIT_ATT_NAME;
+    }
+
+    public String getFIT_ATT_VALUE() {
+        return FIT_ATT_VALUE;
+    }
+
+    public void setFIT_ATT_VALUE(String FIT_ATT_VALUE) {
+        this.FIT_ATT_VALUE = FIT_ATT_VALUE;
+    }
+
+    public List<Fitment> getFitmentsList() {
+        return fitmentsList;
+    }
+
+    public void setFitmentsList(List<Fitment> fitmentsList) {
+        this.fitmentsList = fitmentsList;
     }
 }

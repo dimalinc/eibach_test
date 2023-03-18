@@ -13,7 +13,7 @@ public class findAllItemsSameSKU {
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
-                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttributes.class).
+                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
                         buildSessionFactory();
         return factory;
     }
@@ -30,8 +30,11 @@ public class findAllItemsSameSKU {
         try {
             session.beginTransaction();
 
-            List<Item> itemsOfPartNumber = session.createQuery
+           /* List<Item> itemsOfPartNumber = session.createQuery
                     ("SELECT a FROM Item a where a.ITEM_PART_NO=" + partNumber,
+                            Item.class).getResultList();*/
+            List<Item> itemsOfPartNumber = session.createQuery
+                    ("SELECT a FROM Item a",
                             Item.class).getResultList();
 
             System.out.println("itemsOfPartNumber list:");
@@ -43,6 +46,8 @@ public class findAllItemsSameSKU {
                     ("SELECT a FROM Fitment a where a.fitmentItem="
                                     + itemsOfPartNumber.get(0).getITEM_ID(),
                             Fitment.class).getResultList();
+            System.out.println("----");
+            System.out.println(allFitmentList);
 
             allCarsList = new ArrayList<>();
 
@@ -114,9 +119,6 @@ public class findAllItemsSameSKU {
         System.out.println(uniqueMakeModelYearHashMap);
 
         //--------------//
-
-
-
  /*
         HashMap<Car,ArrayList<Car>> uniqueCarsHashMap = new HashMap();
         uniqueCarsHashMap.put(allCarsList.get(0),new ArrayList<Car>());

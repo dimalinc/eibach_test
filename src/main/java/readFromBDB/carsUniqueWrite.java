@@ -15,7 +15,7 @@ public class carsUniqueWrite {
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
-                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttributes.class).
+                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
                         addAnnotatedClass(CarUnique.class).
                         buildSessionFactory();
         return factory;
@@ -46,7 +46,7 @@ public class carsUniqueWrite {
                 carUniqueHashSet.add(carUnique);
               //  System.out.println(carUnique + " added to HashSet");
               //  car.setCAR_UNIQUE_ID(carUnique.getCAR_UNIQUE_ID());
-                session.persist(car);
+                session.save(car);
             }
 
         /*  System.out.println("hashSetcarUniqueObjectWoID.size()" + hashSetcarUniqueObjectWoID.size());

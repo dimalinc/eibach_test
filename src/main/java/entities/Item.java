@@ -80,7 +80,7 @@ public class Item {
         return "\r\n\"" + '\''+
                 "--------------" + '\''+
                 "Item{" +
-                "ITEM_ID=" + ITEM_ID +
+                "ITEM_ID=" + ITEM_ID + "\r\n" +
                 ", ITEM_PART_NO='" + ITEM_PART_NO + '\'' +
                 ", ITEM_MANUFACTURER='" + ITEM_MANUFACTURER + '\'' +
                 ", ITEM_TYPE='" + ITEM_TYPE + '\'' +

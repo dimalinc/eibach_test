@@ -13,7 +13,7 @@ public class readAllCarsForShock {
          SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
-                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttributes.class).
+                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
                         buildSessionFactory();
 
          return factory;

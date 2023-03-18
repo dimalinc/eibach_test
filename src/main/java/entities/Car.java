@@ -25,7 +25,7 @@ public class Car implements Comparable<Car> {
     @Column(name = "CAR_DRIVE")
     private String CAR_DRIVE;
 
-    @ManyToOne
+   /* @ManyToOne
     @JoinColumn(name = "CAR_UNIQUE_ID")
     private CarUnique carUnique;
 
@@ -36,7 +36,7 @@ public class Car implements Comparable<Car> {
         this.carUnique = carUnique;
     }
 
-  /*  public int getCAR_UNIQUE_ID() {
+    public int getCAR_UNIQUE_ID() {
         return CAR_UNIQUE_ID;
     }
 

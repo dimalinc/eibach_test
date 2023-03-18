@@ -20,7 +20,7 @@ public class Fitment {
     @JoinTable(name="fitment_attributes_link",
             joinColumns = @JoinColumn(name="FIT_ID"),
             inverseJoinColumns = @JoinColumn(name="FIT_ATT_ID"))
-    private List<FitmentAttributes> fitmentAttributesList;
+    private List<FitmentAttribute> fitmentAttributesList;
 
     @OneToOne
     @JoinColumn(name="CAR_ID")
@@ -49,27 +49,27 @@ public class Fitment {
         this.FIT_ID = FIT_ID;
     }
 
-    /*public int getCAR_ID() {
-        return CAR_ID;
+    public int getCAR_ID() {
+        return fitmentCar.getCAR_ID();
     }
 
-    public void setCAR_ID(int CAR_ID) {
+  /*  public void setCAR_ID(int CAR_ID) {
         this.CAR_ID = CAR_ID;
     }*/
 
- /*   public int getITEM_ID() {
-        return ITEM_ID;
+   public int getITEM_ID() {
+        return fitmentItem.getITEM_ID();
     }
 
-    public void setITEM_ID(int ITEM_ID) {
+   /*  public void setITEM_ID(int ITEM_ID) {
         this.ITEM_ID = ITEM_ID;
     }*/
 
-    public List<FitmentAttributes> getFitmentAttributesList() {
+    public List<FitmentAttribute> getFitmentAttributesList() {
         return fitmentAttributesList;
     }
 
-    public void setFitmentAttributesList(List<FitmentAttributes> fitmentAttributesList) {
+    public void setFitmentAttributesList(List<FitmentAttribute> fitmentAttributesList) {
         this.fitmentAttributesList = fitmentAttributesList;
     }
 
@@ -109,7 +109,7 @@ public class Fitment {
                 ", fitmentAttributesList=" + fitmentAttributesList +
                 "\r\n" +
                 ", fitmentCar=" + fitmentCar +
-
+                "\r\n" +
                 '}';
 
 

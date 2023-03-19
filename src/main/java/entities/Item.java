@@ -1,5 +1,7 @@
 package entities;
 
+import entities.attributes_links.ItemPic;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,6 +24,10 @@ public class Item {
             joinColumns = @JoinColumn(name="ITEM_ID"),
             inverseJoinColumns = @JoinColumn(name="ITEM_ATT_ID"))
     private List<ItemAttribute> itemAttributeList;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="ITEM_ID")
+    private List<ItemPic> itemPicsList;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="ITEM_ID")
@@ -54,6 +60,12 @@ public class Item {
     public List<ItemAttribute> getItemAttributeList() {
         return itemAttributeList;
     }
+
+    public List<ItemPic> getItemPicsList() {
+        return itemPicsList;
+    }
+
+
 
     public void setItemAttributeList(List<ItemAttribute> itemAttributeList) {
         this.itemAttributeList = itemAttributeList;

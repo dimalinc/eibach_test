@@ -1,6 +1,8 @@
 package test;
 
+import com.opencsv.CSVWriter;
 import entities.*;
+import entities.attributes_links.ItemPic;
 import entities.objects.CsvRowObject;
 import entities.objects.DbObject;
 import org.hibernate.SQLQuery;
@@ -8,9 +10,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class main {
+    static String csvFilePath="output.csv";
     public static Item newItem;
 
     public static void itemInit() {
@@ -46,6 +53,7 @@ public class main {
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
                         addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
+                        addAnnotatedClass(ItemPic.class).
                         buildSessionFactory();
         Session session = factory.getCurrentSession();
 
@@ -65,13 +73,79 @@ public class main {
             System.out.println(" * * * * * ");
             System.out.println("csvRowObject = ");
             System.out.println(csvRowObject);
+            // writing object to csv
+            writeDataLineByLine(csvFilePath,csvRowObject.toStringArray());
+
         } catch (Exception exc) {
             exc.printStackTrace();
         } finally {
             factory.close();
         }
+
         System.out.println("Generating item done in " + (System.currentTimeMillis()-start)/1000 + " seconds or " + (System.currentTimeMillis()-start)/60000 + " minutes");
         System.out.println(System.getProperty("java.home"));
     }
+
+    public static void writeDataLineByLine(String filePath,String[] data1)
+    {
+        // first create file object for file placed at location
+        // specified by filepath
+        File file = new File(filePath);
+        try {
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+
+            // adding header to csv
+            String[] header = { "Col1", "Col2", "Col3" };
+            writer.writeNext(header);
+
+            // add data to csv
+            writer.writeNext(data1);
+
+            // closing writer connection
+            writer.close();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeDataForCustomSeparatorCSV(String filePath)
+    {
+
+        // first create file object for file placed at location
+        // specified by filepath
+        File file = new File(filePath);
+
+        try {
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(file);
+
+            // create CSVWriter with '|' as separator
+            CSVWriter writer = new CSVWriter(outputfile, '|',
+                    CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END);
+
+            // create a List which contains String array
+            List<String[]> data = new ArrayList<String[]>();
+            data.add(new String[] { "Name", "Class", "Marks" });
+            data.add(new String[] { "Aman", "10", "620" });
+            data.add(new String[] { "Suraj", "10", "630" });
+            writer.writeAll(data);
+
+            // closing writer connection
+            writer.close();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 
 }

@@ -455,5 +455,13 @@ public class Car implements Comparable<Car> {
                 CAR_DRIVE.equals(newCar.CAR_DRIVE);
     }
 
+    public String getCarLine() {
+        return (CAR_MAKE+" "+CAR_MODEL+" "+YEAR_START+"-"+YEAR_FINISH/*+" "+CAR_DRIVE*/).trim();
+    }
+
+
+
+
+
 }
 

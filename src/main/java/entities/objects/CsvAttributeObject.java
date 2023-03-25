@@ -20,11 +20,11 @@ public class CsvAttributeObject implements Comparable<CsvAttributeObject> {
 
     @Override
     public String toString() {
-        return "csvAttributeObject{" + /*"\r\n" +*/
+        return /*"csvAttributeObject{" +*/ /*"\r\n" +*/
                 /*"attributeName='" +*/ attributeName + sep +/*'\'' "\r\n" +*/
                 /*", attributeValue='" +*/ attributeValue + sep +/*'\''  +"\r\n" +*/
                 /*", number=" +*/ number + sep +/*"\r\n" +*/
-                /*", customized=" +*/ customized + sepEnd + "\r\n" + '}';
+                /*", customized=" +*/ customized + sepEnd /*+ "\r\n" + '}'*/;
     }
 
     @Override

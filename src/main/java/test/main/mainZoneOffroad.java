@@ -1,11 +1,10 @@
-package test;
+package test.main;
 
 import com.opencsv.CSVWriter;
 import entities.*;
 import entities.attributes_links.ItemPic;
 import entities.objects.CsvRowObject;
 import entities.objects.DbObject;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -16,8 +15,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class main {
-    static String csvFilePath="output.csv";
+public class mainZoneOffroad {
+    final static String brand="Zone Offroad";
+    final static String[] header = {"id","SKU","itemType","brand","Title"
+            ,"Category","description","imgUrl","ATTRIBUTES"/*,"CarAttributes",
+            "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/
+    };
+
+    static String csvFilePath="output_"+brand+".csv";
     public static Item newItem;
 
     public static void itemInit() {
@@ -57,24 +62,47 @@ public class main {
                         buildSessionFactory();
         Session session = factory.getCurrentSession();
 
+        int itemsCount=0;
         try {
             session.beginTransaction();
           /*  String categoriesQuery = "select * from items where ITEM_ID=999";
             SQLQuery sqlQuery1 = session.createSQLQuery(categoriesQuery);
             List queriedItems = sqlQuery1.list();*/
-            newItem = session.createQuery
+           /* newItem = session.createQuery
                     ("SELECT a FROM Item a where a.ITEM_PART_NO=" + partNumber,
-                            Item.class).getResultList().get(0);
-            // newItem = session.load(Item.class,2);
-            System.out.println(newItem);
-            DbObject dbObject = new DbObject(newItem);
-            CsvRowObject csvRowObject = new CsvRowObject(dbObject);
-
-            System.out.println(" * * * * * ");
-            System.out.println("csvRowObject = ");
-            System.out.println(csvRowObject);
+                            Item.class).getResultList().get(0);*/
             // writing object to csv
-            writeDataLineByLine(csvFilePath,csvRowObject.toStringArray());
+            //  writeDataLineByLine(csvFilePath,csvRowObject.toStringArray());
+
+            // newItem = session.load(Item.class,2);
+
+            Long startItemList = System.currentTimeMillis();
+            List<Item> itemList= session.createQuery
+                    ("SELECT a FROM Item a where a.ITEM_MANUFACTURER='"+brand+"'",
+                            Item.class).getResultList();
+            itemsCount=itemList.size();
+            System.out.println("Items queried in + " + (System.currentTimeMillis()-startItemList) + "millliseconds");
+
+            ArrayList<CsvRowObject> csvRowObjectArrayList = new ArrayList<>();
+            int n=0;
+            for (Item newItem:itemList) {
+                System.out.println(newItem);
+                Long startItemBuild=System.currentTimeMillis();
+                DbObject dbObject = new DbObject(newItem);
+                CsvRowObject csvRowObject = new CsvRowObject(dbObject);
+                csvRowObjectArrayList.add(csvRowObject);
+                System.out.println(" * * * * * ");
+                System.out.println(n++ + "___ csvRowObject = ");
+                // System.out.println(csvRowObject);
+                System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
+            }
+
+            List<String[]> stringArrayList = new ArrayList<>();
+            for (CsvRowObject csvRowObject:csvRowObjectArrayList){
+                stringArrayList.add(csvRowObject.toStringArray());
+            }
+
+            writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
 
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -82,7 +110,7 @@ public class main {
             factory.close();
         }
 
-        System.out.println("Generating item done in " + (System.currentTimeMillis()-start)/1000 + " seconds or " + (System.currentTimeMillis()-start)/60000 + " minutes");
+        System.out.println("Generating CSV for " +itemsCount + " done in " + (System.currentTimeMillis()-start)/1000 + " seconds or " + (System.currentTimeMillis()-start)/60000 + " minutes");
         System.out.println(System.getProperty("java.home"));
     }
 
@@ -99,8 +127,7 @@ public class main {
             CSVWriter writer = new CSVWriter(outputfile);
 
             // adding header to csv
-            String[] header = { "Col1", "Col2", "Col3" };
-            writer.writeNext(header);
+              writer.writeNext(header);
 
             // add data to csv
             writer.writeNext(data1);
@@ -114,9 +141,8 @@ public class main {
         }
     }
 
-    public static void writeDataForCustomSeparatorCSV(String filePath)
+    public static void writeDataForCustomSeparatorCSV(String filePath,List<String[]> data)
     {
-
         // first create file object for file placed at location
         // specified by filepath
         File file = new File(filePath);
@@ -126,16 +152,16 @@ public class main {
             FileWriter outputfile = new FileWriter(file);
 
             // create CSVWriter with '|' as separator
-            CSVWriter writer = new CSVWriter(outputfile, '|',
+            CSVWriter writer = new CSVWriter(outputfile/*, '^',
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END);
+                    CSVWriter.DEFAULT_LINE_END*/);
 
             // create a List which contains String array
-            List<String[]> data = new ArrayList<String[]>();
+            /*List<String[]> data = new ArrayList<String[]>();
             data.add(new String[] { "Name", "Class", "Marks" });
             data.add(new String[] { "Aman", "10", "620" });
-            data.add(new String[] { "Suraj", "10", "630" });
+            data.add(new String[] { "Suraj", "10", "630" });*/
             writer.writeAll(data);
 
             // closing writer connection
@@ -146,6 +172,5 @@ public class main {
             e.printStackTrace();
         }
     }
-
 
 }

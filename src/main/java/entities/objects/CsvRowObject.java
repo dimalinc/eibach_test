@@ -1,19 +1,18 @@
 package entities.objects;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import entities.*;
 import entities.attributes_links.ItemPic;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
 public class CsvRowObject {
+    final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("/", "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
+    final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(Arrays.asList("Start", "Finish", "Full", "Price"));
 
-   final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(
-            Arrays.asList("Start", "Finish", "Full"));
-
-    private static String attributeSeparator = "; " + '\'' + "\r\n";
+    private static String attributeSeparator = "; " /*+ "\r\n"*/;
 
     DbObject dbObject;
     //  List<String,String> csvAttributeValueStringList = new ArrayList<>();
@@ -29,13 +28,15 @@ public class CsvRowObject {
     Map<Car, List<CarAttribute>> mapCarCarAttributesList = new LinkedHashMap<>();
 
     int id;
-    String SKU;
+    String sku;
     String itemType;
     String brand;
+    String series;
     String upperMount;
     String lowerMount;
     String extendedLength;
     String collapsedLength;
+    String title;
 
     ArrayList<String> carCategoryAttributesList = new ArrayList<>();
     String carCategoryAttributeString;
@@ -62,11 +63,11 @@ public class CsvRowObject {
         this.dbObject = dbObject;
         this.item = dbObject.getItem();
 
-        this.SKU = item.getITEM_PART_NO();
+        this.sku = item.getITEM_PART_NO();
         this.itemType = item.getITEM_TYPE();
         this.brand = item.getITEM_MANUFACTURER();
         itemAttributeList = item.getItemAttributeList();
-        initLengthAndMountings();
+        initLengthMountSeries();
 
         // generating YearAttributesList
         ArrayList<CsvAttributeObject> yearCsvAttributeObjectsArrayList = generateYearAttributesList(dbObject.getCarList());
@@ -95,20 +96,26 @@ public class CsvRowObject {
 
         generateItemDescription();
 
+        generateTitle();
+
+    }
+
+    private void generateTitle() {
+        title = sku + " " + itemType + " " + brand;
     }
 
     private void generateItemDescription() {
         StringBuilder sb = new StringBuilder();
         for (String key : csvAttributeValueStringMultimap.keys()) {
-                if ((!sb.toString().contains(key)) & (!checkForExceptions(key,exceptionsForDescArrayList)))
-                    sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+            if ((!sb.toString().contains(key)) && (!checkForExceptions(key, exceptionsForDescArrayList)))
+                sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
         description = sb.toString().trim();
     }
 
     private boolean checkForExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
-        boolean b=false;
-        for (String exception:exceptionsStringArrayList) {
+        boolean b = false;
+        for (String exception : exceptionsStringArrayList) {
             if (checkedString.contains(exception)) {
                 b = true;
                 break;
@@ -155,18 +162,28 @@ public class CsvRowObject {
         for (CsvAttributeObject csv_LiftStart_AttributeObject : liftStartCsvAttributeObjectArrayList) {
             String attributeName = csv_LiftStart_AttributeObject.getAttributeName();
             String carLine = attributeName.replace("Lift Start ", "");
-            double liftStartValue = Double.parseDouble(csv_LiftStart_AttributeObject.getAttributeValue());
+
+            double liftStartValue = 0;
+            try {
+                Double.parseDouble(csv_LiftStart_AttributeObject.getAttributeValue());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
 
             double liftFinishValue = 0;
             for (CsvAttributeObject csvAttributeObject : liftFinishCsvAttributeObjectArrayList) {
                 if (csvAttributeObject.getAttributeName().contains("Lift Finish " + carLine))
-                    liftFinishValue = Double.parseDouble(csvAttributeObject.getAttributeValue());
+                    try {
+                        liftFinishValue = Double.parseDouble(csvAttributeObject.getAttributeValue());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
             }
 
             ArrayList<Double> liftRange = new ArrayList<>();
             double liftValue = liftStartValue;
             int n = 0;
-            while (liftValue < liftFinishValue) {
+            while (liftValue <= liftFinishValue) {
                 liftRange.add(liftValue);
                 csvAttributeValueStringMultimap.put("Lift " + carLine, String.valueOf(liftValue));
                 csvAttributeObjectArrayList.add(new CsvAttributeObject("Lift " + carLine, String.valueOf(liftValue), n++));
@@ -247,11 +264,11 @@ public class CsvRowObject {
         for (String s : carCategoryAttributesList) {
             sb.append(s).append(attributeSeparator);
         }
-        sb.replace(sb.toString().length() - 2, sb.toString().length(), "");
+        if (sb.toString().length() > 2) sb.replace(sb.toString().length() - 2, sb.toString().length(), "");
         return sb.toString();
     }
 
-    private void initLengthAndMountings() {
+    private void initLengthMountSeries() {
         for (ItemAttribute itemAttribute : itemAttributeList) {
             if (itemAttribute.getITEM_ATT_NAME().contains("Upper Mount"))
                 upperMount = itemAttribute.getITEM_ATT_VALUE();
@@ -261,6 +278,8 @@ public class CsvRowObject {
                 extendedLength = itemAttribute.getITEM_ATT_VALUE();
             if (itemAttribute.getITEM_ATT_NAME().contains("Collapsed Length"))
                 collapsedLength = itemAttribute.getITEM_ATT_VALUE();
+            if (itemAttribute.getITEM_ATT_NAME().contains("Serie"))
+                series = itemAttribute.getITEM_ATT_VALUE();
         }
     }
 
@@ -325,7 +344,7 @@ public class CsvRowObject {
     public String toString() {
         return "CsvRowObject{" +
                 ", id=" + id + '\'' + "\r\n" +
-                ", SKU='" + SKU + '\'' + "\r\n" +
+                ", SKU='" + sku + '\'' + "\r\n" +
                 ", itemType='" + itemType + '\'' + "\r\n" +
                 ", brand='" + brand + '\'' + "\r\n" +
                 ", upperMount='" + upperMount + '\'' + "\r\n" +
@@ -347,6 +366,7 @@ public class CsvRowObject {
 
                 "dbObject=" + dbObject + '\'' + "\r\n" +
                 ", item=" + item + '\'' + "\r\n" +
+                ", Title=" + title + '\'' + "\r\n" +
                 ", fitmentList=" + fitmentList + '\'' + "\r\n" +
                 ", mapFitmentCar=" + mapFitmentCar + '\'' + "\r\n" +
                 ", mapFitmentFitmentAttributesList=" + mapFitmentFitmentAttributesList + '\'' + "\r\n" +
@@ -363,30 +383,49 @@ public class CsvRowObject {
                 '}';
     }
 
+
     public String[] toStringArray() {
         String[] stringArray = new String[30];
         stringArray[0] = String.valueOf(id);
-        stringArray[1] = SKU;
+        stringArray[1] = sku;
         stringArray[2] = itemType;
         stringArray[3] = brand;
-        stringArray[4] = upperMount + '\'' + "\r\n" + lowerMount + +'\'' + "\r\n" + extendedLength + '\'' + "\r\n" + collapsedLength;
+        stringArray[4] = title;
+        stringArray[5] = carCategoryAttributeString;
+        stringArray[6] = description;
+        stringArray[7] = imgUrl;
+        // build csv attributes
+        ArrayList<CsvAttributeObject> csvAttributeObjectArrayList = new ArrayList<>();
+        for (String key : csvAttributeValueStringMultimap.keySet()) {
+            int n = 0;
+            for (String value : csvAttributeValueStringMultimap.get(key)) {
+                if (value.length()<127)
+                csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
+            }
+        }
+        /*StringBuilder sb = new StringBuilder();
+        for (CsvAttributeObject csvAttributeObject:csvAttributeObjectArrayList){
+            sb.append(csvAttributeObject.attributeName).append(": ").append(csvAttributeObject.attributeValue).append(": ") ;
+        }*/
+        stringArray[8] = csvAttributeObjectArrayList.toString().replace("[", "").
+                replace("]", "").replace(";,", ";")
+                .replace("\r\n" + "Material", "")
+                .replaceAll("(\\r|\\n)", "");
       /*  stringArray[5] = driveAttributeString;
         stringArray[6] = positionAttributeString;
         stringArray[7] = yearAttributeString;
         stringArray[8] = liftAttributeString;
         stringArray[9] = otherAttributeString;*/
-        stringArray[5] = description;
-        stringArray[6] = imgUrl;
-        stringArray[7] = fitmentList.toString();
-        stringArray[8] = mapFitmentFitmentAttributesList.toString();
-        stringArray[9] = mapFitmentCar.toString();
-        stringArray[10] = mapCarCarAttributesList.toString();
-        stringArray[11] = item.toString();
-        stringArray[12] = itemAttributeList.toString();
-        stringArray[13] = carCategoryAttributesList.toString();
-        stringArray[14] = carCategoryAttributeString;
-        stringArray[15] = csvAttributeObjectArrayList.toString();
-        stringArray[16] = csvAttributeValueStringMultimap.toString();
+        stringArray[9] = series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
+       /* stringArray[10] = fitmentList.toString();
+        stringArray[11] = mapFitmentFitmentAttributesList.toString();
+        stringArray[12] = mapFitmentCar.toString();
+        stringArray[13] = mapCarCarAttributesList.toString();
+        stringArray[14] = item.toString();
+        stringArray[15] = itemAttributeList.toString();
+        stringArray[16] = carCategoryAttributesList.toString();
+        stringArray[17] = csvAttributeObjectArrayList.toString();
+        stringArray[18] = csvAttributeValueStringMultimap.toString();*/
         /*stringArray[22] = ;
         stringArray[23] = ;
         stringArray[24] = ;
@@ -395,7 +434,13 @@ public class CsvRowObject {
         stringArray[27] = ;
         stringArray[28] = ;
         stringArray[29] = ;*/
+
+        for (int i = 0; i < stringArray.length; i++) {
+            for (String exc:charExceptionArrayList)
+                if ( (stringArray[i]!=null) && (i!=7)  )
+            stringArray[i] = stringArray[i].replace(exc, "_");
+        }
+
         return stringArray;
     }
-
 }

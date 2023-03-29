@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class mainFox {
-    final static String brand="Eibach";
+    final static String brand="FOX";
     final static String[] header = {"id","SKU","itemType","brand","Title"
             ,"Category","description","imgUrl","ATTRIBUTES"/*,"CarAttributes",
             "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/

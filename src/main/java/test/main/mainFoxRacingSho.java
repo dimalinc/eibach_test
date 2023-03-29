@@ -22,7 +22,7 @@ public class mainFoxRacingSho {
             "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/
     };
 
-    static String csvFilePath="output_"+brand+".csv";
+    static String csvFilePath="output_"+"FoxRacingShox"+".csv";
     public static Item newItem;
 
     public static void itemInit() {

@@ -23,6 +23,12 @@ public class CsvRowObject {
     List<ItemPic> itemPicsList = new ArrayList<>();
     List<ItemAttribute> itemAttributeList;
     List<Fitment> fitmentList;
+    List<Car> carList;
+    List<FitmentAttribute> fitmentAttributeList;
+    List<CarAttribute> carAttributeList;
+
+
+
     Map<Fitment, Car> mapFitmentCar = new LinkedHashMap<>();
     Map<Fitment, List<FitmentAttribute>> mapFitmentFitmentAttributesList = new LinkedHashMap<>();
     Map<Car, List<CarAttribute>> mapCarCarAttributesList = new LinkedHashMap<>();
@@ -176,7 +182,8 @@ public class CsvRowObject {
                     try {
                         liftFinishValue = Double.parseDouble(csvAttributeObject.getAttributeValue());
                     } catch (NumberFormatException e) {
-                        e.printStackTrace();
+                       // e.printStackTrace();
+                        liftFinishValue = 0;
                     }
             }
 

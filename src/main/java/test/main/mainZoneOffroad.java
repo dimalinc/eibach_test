@@ -22,7 +22,7 @@ public class mainZoneOffroad {
             "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/
     };
 
-    static String csvFilePath="output_"+brand+".csv";
+    static String csvFilePath="output_"+brand+"_TEST_lists"+".csv";
     public static Item newItem;
 
     public static void itemInit() {
@@ -80,6 +80,19 @@ public class mainZoneOffroad {
             List<Item> itemList= session.createQuery
                     ("SELECT a FROM Item a where a.ITEM_MANUFACTURER='"+brand+"'",
                             Item.class).getResultList();
+            List<ItemAttribute> itemAttributeList= session.createQuery
+                    ("SELECT a FROM ItemAttribute a ",
+                            ItemAttribute.class).getResultList();
+            List<Car> carList = session.createQuery("SELECT a FROM Car a",
+                    Car.class).getResultList();
+            List<CarAttribute> carAttributeList = session.createQuery("SELECT a FROM Car a",
+                    CarAttribute.class).getResultList();
+            List<Fitment> fitmentList = session.createQuery("SELECT a FROM Fitment a",
+                    Fitment.class).getResultList();
+            List<FitmentAttribute> fitmentAttributeList = session.createQuery("SELECT a FROM Fitment a",
+                    FitmentAttribute.class).getResultList();
+
+
             itemsCount=itemList.size();
             System.out.println("Items queried in + " + (System.currentTimeMillis()-startItemList) + "millliseconds");
 

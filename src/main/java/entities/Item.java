@@ -33,6 +33,8 @@ public class Item {
     @JoinColumn(name="ITEM_ID")
     private List<Fitment> itemFitmentsList;
 
+
+
     public String getITEM_PART_NO() {
         return ITEM_PART_NO;
     }
@@ -64,7 +66,6 @@ public class Item {
     public List<ItemPic> getItemPicsList() {
         return itemPicsList;
     }
-
 
 
     public void setItemAttributeList(List<ItemAttribute> itemAttributeList) {

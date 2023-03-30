@@ -86,8 +86,8 @@ public class mainBilstein {
             ArrayList<CsvRowObject> csvRowObjectArrayList = new ArrayList<>();
             int n=0;
             for (Item newItem:itemList) {
+                long startItemBuild=System.currentTimeMillis();
                 System.out.println(newItem);
-                Long startItemBuild=System.currentTimeMillis();
                 DbObject dbObject = new DbObject(newItem);
                 CsvRowObject csvRowObject = new CsvRowObject(dbObject);
                 csvRowObjectArrayList.add(csvRowObject);
@@ -95,7 +95,9 @@ public class mainBilstein {
                 System.out.println(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
                 System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
+                //if (n>50) break;
             }
+
 
             List<String[]> stringArrayList = new ArrayList<>();
             for (CsvRowObject csvRowObject:csvRowObjectArrayList){

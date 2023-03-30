@@ -11,7 +11,8 @@ import entities.attributes_links.Item_attributes_link;
 import java.util.*;
 
 public class CsvRowObject {
-    final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("null","/", "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
+    // TODO: check slash \ import for manuals urls
+    final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("null",/*"/",*/ "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
     final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(Arrays.asList("Start", "Finish", "Full", "Price"));
 
     private static final String attributeSeparator = "; " /*+ "\r\n"*/;
@@ -110,8 +111,8 @@ public class CsvRowObject {
       //  this.id = item.getITEM_ID();
         this.dbObject = dbObject;
         this.item = dbObject.getItem();
-
         this.id=item.getITEM_ID();
+       // System.out.println("Item id when building CsvRowObject = " + id);
         this.sku = item.getITEM_PART_NO();
         this.itemType = item.getITEM_TYPE();
         this.brand = item.getITEM_MANUFACTURER();
@@ -166,7 +167,7 @@ public class CsvRowObject {
     private boolean containsExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
         boolean b = false;
         for (String exception : exceptionsStringArrayList) {
-            if (checkedString.contains(exception)) {
+            if ( (!checkedString.contains("http"))&&checkedString.contains(exception))  {
                 b = true;
                 break;
             }
@@ -449,7 +450,7 @@ public class CsvRowObject {
         for (String key : csvAttributeValueStringMultimap.keySet()) {
             int n = 0;
             for (String value : csvAttributeValueStringMultimap.get(key)) {
-                if ( (value.length() < 127) && (!containsExceptions(value, exceptionsForDescArrayList)) )
+                if ( (value.length() < 127) && (!containsExceptions(key, exceptionsForDescArrayList)) )
                     csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
             }
         }

@@ -67,7 +67,7 @@ public class DbObject {
 
     public DbObject(Item item) {
         this.item = item;
-        this.item.setITEM_ID(item.getITEM_ID());
+       // this.item.setITEM_ID(item.getITEM_ID());
         setItemAttributeList(item.getItemAttributeList());
         setFitmentList(item.getItemFitmentsList());
 

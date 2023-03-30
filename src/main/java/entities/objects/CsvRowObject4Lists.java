@@ -10,11 +10,11 @@ import entities.attributes_links.Item_attributes_link;
 
 import java.util.*;
 
-public class CsvRowObject {
-    final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("null","/", "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
+public class CsvRowObject4Lists {
+    final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("/", "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
     final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(Arrays.asList("Start", "Finish", "Full", "Price"));
 
-    private static final String attributeSeparator = "; " /*+ "\r\n"*/;
+    private static String attributeSeparator = "; " /*+ "\r\n"*/;
 
     DbObject dbObject;
     //  List<String,String> csvAttributeValueStringList = new ArrayList<>();
@@ -23,11 +23,11 @@ public class CsvRowObject {
 
     Item item;
      List<ItemPic> itemPicsList = new ArrayList<>();
-     List<ItemAttribute> itemAttributeList;
-     List<Fitment> fitmentList;
-     List<Car> carList;
-     List<FitmentAttribute> fitmentAttributeList;
-     List<CarAttribute> carAttributeList;
+     List<ItemAttribute> itemAttributeList = new ArrayList<>();
+     List<Fitment> fitmentList = new ArrayList<>();
+     List<Car> carList = new ArrayList<>();
+     List<FitmentAttribute> fitmentAttributeList = new ArrayList<>();
+     List<CarAttribute> carAttributeList = new ArrayList<>();
 
 
     Map<Fitment, Car> mapFitmentCar = new LinkedHashMap<>();
@@ -67,14 +67,14 @@ public class CsvRowObject {
     ArrayList<CsvAttributeObject> csvAttributeObjectArrayList = new ArrayList<>();
     LinkedHashSet<CsvAttributeObject> yearCsvAttributeObjectsLinkedHashSet;
 
-    public CsvRowObject(DbObject dbObject, List<ItemAttribute> allItemAttributeList,
-                        List<Car> allCarList, List<CarAttribute> allCarAttributeList,
-                        List<Fitment> allFitmentList, List<FitmentAttribute> allFitmentAttributeList,
-                        List<Item_attributes_link> allItemAttributesLinkList,
-                        List<Fitment_attributes_link> allfitmentAttributesLinkList,
-                        List<Car_attributes_link> allCarAttributesLinkList) {
+    public CsvRowObject4Lists(DbObject dbObject, List<ItemAttribute> allItemAttributeList,
+                              List<Car> allCarList, List<CarAttribute> allCarAttributeList,
+                              List<Fitment> allFitmentList, List<FitmentAttribute> allFitmentAttributeList,
+                              List<Item_attributes_link> allItemAttributesLinkList,
+                              List<Fitment_attributes_link> allfitmentAttributesLinkList,
+                              List<Car_attributes_link> allCarAttributesLinkList) {
 
-        CsvRowObject csvRowObject = new CsvRowObject(dbObject);
+        CsvRowObject4Lists csvRowObject = new CsvRowObject4Lists(dbObject);
 
 
         for (Item_attributes_link item_attributes_link : allItemAttributesLinkList)
@@ -106,7 +106,7 @@ public class CsvRowObject {
             }
     }
 
-    public CsvRowObject(DbObject dbObject) {
+    public CsvRowObject4Lists(DbObject dbObject) {
       //  this.id = item.getITEM_ID();
         this.dbObject = dbObject;
         this.item = dbObject.getItem();
@@ -115,7 +115,9 @@ public class CsvRowObject {
         this.sku = item.getITEM_PART_NO();
         this.itemType = item.getITEM_TYPE();
         this.brand = item.getITEM_MANUFACTURER();
-        itemAttributeList = item.getItemAttributeList();
+        //itemAttributeList = item.getItemAttributeList();
+        // ToDo: вернуть item.getItemAttributeList();
+        itemAttributeList = dbObject.getItemAttributeList();
         initLengthMountSeries();
 
         // generating YearAttributesList
@@ -130,7 +132,9 @@ public class CsvRowObject {
         carCategoryAttributesList.addAll(generateCarCategoryAttributesList(dbObject.getCarList()));
         carCategoryAttributeString = buildCarCategoryAttributeString(carCategoryAttributesList);
 
-        this.fitmentList = item.getItemFitmentsList();
+        //TODO: check fitmentlist
+        //this.fitmentList = item.getItemFitmentsList();
+        fitmentList=dbObject.getFitmentList();
         mapsInit();
         csvAttributeValueStringMultimapInit();
 
@@ -156,14 +160,13 @@ public class CsvRowObject {
     private void generateItemDescription() {
         StringBuilder sb = new StringBuilder();
         for (String key : csvAttributeValueStringMultimap.keys()) {
-            if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
-                sb.append(key + ": "
-                        + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+            if ((!sb.toString().contains(key)) && (!checkForExceptions(key, exceptionsForDescArrayList)))
+                sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
         description = sb.toString().trim();
     }
 
-    private boolean containsExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
+    private boolean checkForExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
         boolean b = false;
         for (String exception : exceptionsStringArrayList) {
             if (checkedString.contains(exception)) {
@@ -175,7 +178,8 @@ public class CsvRowObject {
     }
 
     private void generateItemPicsUrlAttributes() {
-        itemPicsList = item.getItemPicsList();
+        //itemPicsList = item.getItemPicsList();
+        itemPicsList=dbObject.itemPicsList;
         StringBuilder sb = new StringBuilder();
         for (ItemPic itemPic : itemPicsList) {
             sb.append(itemPic.getPIC_URL()).append(attributeSeparator);
@@ -185,7 +189,7 @@ public class CsvRowObject {
 
     // сгенерировать драйв-атрибуты для машины
     private void generateDriveAttributesForCar() {
-        for (Fitment fitment : item.getItemFitmentsList()) {
+        for (Fitment fitment : fitmentList) {
             csvAttributeValueStringMultimap.put("Drive " + fitment.getFitmentCar().getCarLine(), fitment.getFitmentCar().getCAR_DRIVE());
             driveAttributeStringArrayList.add("Drive " + fitment.getFitmentCar().getCarLine() + " " + fitment.getFitmentCar().getCAR_DRIVE());
         }
@@ -296,13 +300,19 @@ public class CsvRowObject {
     }
 
     private void mapsInit() {
+        System.out.print(" maps init started _ ");
         for (Fitment fitment : fitmentList) {
-            mapFitmentCar.put(fitment, fitment.getFitmentCar());
-            mapFitmentFitmentAttributesList.put(fitment, fitment.getFitmentAttributesList());
-            mapCarCarAttributesList.put(fitment.getFitmentCar(), fitment.getFitmentCar().getCarAttributeList());
+            if (carList.size()>0)
+            mapFitmentCar.put(fitment,dbObject.carList.get(fitment.getCAR_ID()/*fitment.getFitmentCar()*/ ));
+            System.out.print(" mapFitmentCar ");
+            mapFitmentFitmentAttributesList.put(fitment, fitmentAttributeList
+                    /*fitment.getFitmentAttributesList()*/);
+            System.out.print(" mapFitmentFitmentAttributesList ");
+            mapCarCarAttributesList.put(fitment.getFitmentCar(), carAttributeList/*fitment.getFitmentCar().getCarAttributeList()*/);
+            System.out.println(" mapCarCarAttributesList ");
         }
+        System.out.println("maps init finished");
     }
-
 
     private String generateCarLine(Car car) {
         StringBuilder sb = new StringBuilder();
@@ -366,6 +376,7 @@ public class CsvRowObject {
         ArrayList<Integer> yearRangeList = new ArrayList<>();
         int yearsQty = car.getYEAR_FINISH() - car.getYEAR_START() + 1;
         for (int i = 0; i < yearsQty; i++) {
+
             yearRangeList.add(car.getYEAR_START() + i);
         }
         // System.out.println(" *** yearRangeList for " + car + "=" + yearRangeList);
@@ -449,7 +460,7 @@ public class CsvRowObject {
         for (String key : csvAttributeValueStringMultimap.keySet()) {
             int n = 0;
             for (String value : csvAttributeValueStringMultimap.get(key)) {
-                if ( (value.length() < 127) && (!containsExceptions(value, exceptionsForDescArrayList)) )
+                if (value.length() < 127)
                     csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
             }
         }
@@ -457,8 +468,6 @@ public class CsvRowObject {
         for (CsvAttributeObject csvAttributeObject:csvAttributeObjectArrayList){
             sb.append(csvAttributeObject.attributeName).append(": ").append(csvAttributeObject.attributeValue).append(": ") ;
         }*/
-
-        // csvAttributesProcessed
         stringArray[8] = csvAttributeObjectArrayList.toString().replace("[", "").
                 replace("]", "").replace(";,", ";")
                 .replace("\r\n" + "Material", "")
@@ -487,13 +496,12 @@ public class CsvRowObject {
         stringArray[28] = ;
         stringArray[29] = ;*/
 
-        // removing bad symbols
         for (int i = 0; i < stringArray.length; i++) {
             for (String exc : charExceptionArrayList)
                 if ((stringArray[i] != null) && (i != 7))
-                    // earlier was replaced by _
-                    stringArray[i] = stringArray[i].replace(exc, "");
+                    stringArray[i] = stringArray[i].replace(exc, "_");
         }
+
         return stringArray;
     }
 }

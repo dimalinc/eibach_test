@@ -94,7 +94,8 @@ public class mainGabriel {
                 System.out.println(" * * * * * ");
                 System.out.println(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
-                System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
+                System.out.println("CsvItem build finished in + " +
+                        (System.currentTimeMillis()-startItemBuild) + "millliseconds");
             }
 
             List<String[]> stringArrayList = new ArrayList<>();

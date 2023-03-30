@@ -17,7 +17,7 @@ public class ItemPic {
     private String PIC_URL;
 
     @Column(name = "ITEM_ID", insertable=false, updatable=false)
-    private String ITEM_ID;
+    private int ITEM_ID;
 
     @Column(name = "FILE_NAME")
     private String FILE_NAME;
@@ -29,7 +29,7 @@ public class ItemPic {
     @JoinColumn(name="ITEM_ID")
     private Item item;
 
-    public ItemPic(int PIC_ID, String PIC_URL, String ITEM_ID, String FILE_NAME, String ACTUAL) {
+    public ItemPic(int PIC_ID, String PIC_URL, int ITEM_ID, String FILE_NAME, String ACTUAL) {
         this.PIC_ID = PIC_ID;
         this.PIC_URL = PIC_URL;
         this.ITEM_ID = ITEM_ID;
@@ -57,11 +57,11 @@ public class ItemPic {
         this.PIC_URL = PIC_URL;
     }
 
-    public String getITEM_ID() {
+    public int getITEM_ID() {
         return ITEM_ID;
     }
 
-    public void setITEM_ID(String ITEM_ID) {
+    public void setITEM_ID(int ITEM_ID) {
         this.ITEM_ID = ITEM_ID;
     }
 

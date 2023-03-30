@@ -1,7 +1,10 @@
 package entities.objects;
 
 import entities.*;
-
+import entities.attributes_links.Car_attributes_link;
+import entities.attributes_links.Fitment_attributes_link;
+import entities.attributes_links.ItemPic;
+import entities.attributes_links.Item_attributes_link;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,15 +13,61 @@ import java.util.Map;
 public class DbObject {
 
    private Item item;
-    List<ItemAttribute> itemAttributeList;
-    List<Fitment> fitmentList;
-    List<FitmentAttribute> fitmentAttributeList;
+    List<ItemAttribute> itemAttributeList=new ArrayList<>();
+    List<Fitment> fitmentList=new ArrayList<>();
+    List<FitmentAttribute> fitmentAttributeList=new ArrayList<>();
     Map<Fitment, List<FitmentAttribute>> fitment_fitmentAttribute_Map = new HashMap<>();
     List<Car> carList = new ArrayList<>();
+    List<CarAttribute> carAttributeList = new ArrayList<>();
     Map<Car, List<CarAttribute>> car_carAttribute_Map = new HashMap<>() ;
+    List<ItemPic> itemPicsList=new ArrayList<>();
+
+    public DbObject(Item item, List<ItemAttribute> allItemAttributeList,
+                        List<Car> allCarList, List<CarAttribute> allCarAttributeList,
+                        List<Fitment> allFitmentList, List<FitmentAttribute> allFitmentAttributeList,
+                        List<Item_attributes_link> allItemAttributesLinkList,
+                        List<Fitment_attributes_link> allfitmentAttributesLinkList,
+                        List<Car_attributes_link> allCarAttributesLinkList,
+                        List<ItemPic> allItemPicsList) {
+
+        this.item=item;
+
+        for (Item_attributes_link item_attributes_link : allItemAttributesLinkList)
+            for (ItemAttribute itemAttribute : allItemAttributeList)
+                if ((this.item.getITEM_ID() == item_attributes_link.getITEM_ID())
+                        && (itemAttribute.getITEM_ATT_ID() == item_attributes_link.getITEM_ATT_ID()))
+                    this.itemAttributeList.add(itemAttribute);
+
+        for (Fitment fitment:allFitmentList)
+            if(this.item.getITEM_ID()==fitment.getITEM_ID())
+                this.fitmentList.add(fitment);
+
+        if(fitmentList!=null) {
+            for (Car car : allCarList)
+                for (Fitment fitment : fitmentList)
+                    if (fitment.getCAR_ID() == car.getCAR_ID())
+                        this.carList.add(car);
+
+            for (Fitment_attributes_link fitment_attributes_link : allfitmentAttributesLinkList)
+                for (FitmentAttribute fitmentAttribute : allFitmentAttributeList)
+                    if (fitmentAttribute.getFIT_ATT_ID() == fitment_attributes_link.getFIT_ID())
+                        this.fitmentAttributeList.add(fitmentAttribute);
+
+            for (Car_attributes_link car_attributes_link : allCarAttributesLinkList)
+                for (CarAttribute carAttribute : allCarAttributeList)
+                    if (carAttribute.getCAR_ATT_ID() == car_attributes_link.getCAR_ATT_ID())
+                        this.carAttributeList.add(carAttribute);
+
+            for (ItemPic itemPic:allItemPicsList) {
+                if (itemPic.getITEM_ID()==item.getITEM_ID())
+                itemPicsList.add(itemPic);
+            }
+        }
+    }
 
     public DbObject(Item item) {
         this.item = item;
+        this.item.setITEM_ID(item.getITEM_ID());
         setItemAttributeList(item.getItemAttributeList());
         setFitmentList(item.getItemFitmentsList());
 
@@ -28,7 +77,6 @@ public class DbObject {
           //  car_carAttribute_Map.put(car, car.getCarAttributeList());
           //  fitment_fitmentAttribute_Map.put(fitment, fitment.getFitmentAttributesList());
         }
-
     }
 
     public Item getItem() {

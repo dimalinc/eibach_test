@@ -2,6 +2,7 @@ package entities.objects;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import entities.*;
 import entities.attributes_links.Car_attributes_link;
 import entities.attributes_links.Fitment_attributes_link;
@@ -9,8 +10,40 @@ import entities.attributes_links.ItemPic;
 import entities.attributes_links.Item_attributes_link;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CsvRowObject {
+
+    public static class CustomSortComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            Pattern pattern = Pattern.compile("[a-zA-Z]+[ ][a-zA-Z]+[ ][0-9]{4}[-][0-9]{4}");
+            Matcher matcher1 = pattern.matcher(o1);
+            Matcher matcher2 = pattern.matcher(o2);
+            if ( (matcher1.find()) && (matcher2.find()) )
+            if (matcher1.group(0).length() > matcher2.group(0).length()) {
+                return 1;
+            }
+            if (matcher1.group(0).length() < matcher2.group(0).length()) {
+                return -1;
+            }
+            return returnCompareBytes(o1, o2);
+        }
+
+        private int returnCompareBytes(String key1, String key2) {
+            for (int i = 0; i < key1.length() - 1; i++) {
+                if (key1.charAt(i) > key2.charAt(i)) {
+                    return 1;
+                }
+                if (key1.charAt(i) < key2.charAt(i)) {
+                    return -1;
+                }
+            }
+            return 0;
+        }
+    }
+
     // TODO: check slash \ import for manuals urls
     final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("null",/*"/",*/ "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
     final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(Arrays.asList("Start", "Finish", "Full", "Price"));
@@ -48,6 +81,7 @@ public class CsvRowObject {
     String title;
 
     ArrayList<String> carCategoryAttributesList = new ArrayList<>();
+    TreeSet<String> carCategoriyAttributesTreeSet = new TreeSet<>();
     String carCategoryAttributeString;
 
     String makeAttributeString;
@@ -129,7 +163,19 @@ public class CsvRowObject {
         yearCsvAttributeObjectsLinkedHashSet = new LinkedHashSet<>(yearCsvAttributeObjectsArrayList);
 
         carCategoryAttributesList.addAll(generateCarCategoryAttributesList(dbObject.getCarList()));
-        carCategoryAttributeString = buildCarCategoryAttributeString(carCategoryAttributesList);
+        TreeSet<String> carMakesTreeSet = new TreeSet<>();
+        TreeSet<String> carMakeAndModelTreeSet = new TreeSet<>();
+        for (Car car:dbObject.getCarList()) {
+            carMakesTreeSet.add(car.getCAR_MAKE());
+            carMakeAndModelTreeSet.add(car.getCAR_MAKE()+" "+car.getCAR_MODEL());
+        }
+
+        // ToDo: проверить как работают новые carCategories через TreeSet
+        carCategoriyAttributesTreeSet.addAll(carMakesTreeSet);
+        carCategoriyAttributesTreeSet.addAll(carMakeAndModelTreeSet);
+        carCategoriyAttributesTreeSet.addAll(carCategoryAttributesList);
+
+        carCategoryAttributeString = buildCarCategoryAttributeString(carCategoriyAttributesTreeSet);
 
         this.fitmentList = item.getItemFitmentsList();
         mapsInit();
@@ -155,13 +201,50 @@ public class CsvRowObject {
     }
 
     private void generateItemDescription() {
+        //  sorting by car
+        Multimap<String, String> matcherFoundCsvAttributeValueStringMultimap = TreeMultimap.create(
+            new CustomSortComparator(),Comparator.naturalOrder()
+        );
+        Multimap<String, String> notFoundCsvAttributeValueStringMultimap = LinkedHashMultimap.create();
+
         StringBuilder sb = new StringBuilder();
         for (String key : csvAttributeValueStringMultimap.keys()) {
-            if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
-                sb.append(key + ": "
-                        + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+            if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList))) {
+
+                Pattern pattern = Pattern.compile("[a-zA-Z]+[ ][a-zA-Z]+[ ][0-9]{4}[-][0-9]{4}");
+                Matcher matcher = pattern.matcher(key);
+                if (matcher.find()) {
+                 //   System.out.println("matcher.group(0)"+matcher.group(0));
+                    matcherFoundCsvAttributeValueStringMultimap.put(matcher.group(0),key);
+                } else { notFoundCsvAttributeValueStringMultimap.put(key,key); }
+                sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+                //
+            }
+            /*TreeSet<String> carKeysSet = new TreeSet<>(matcherFoundCsvAttributeValueStringMultimap.keySet());
+            for (String key2:carKeysSet)
+                    for(String key0: matcherFoundCsvAttributeValueStringMultimap.get(key2) )
+                    for (String key3 : csvAttributeValueStringMultimap.keys()) {
+                        if ((!sb.toString().contains(key0)) && (!containsExceptions(key0, exceptionsForDescArrayList)))
+                            sb.append(key0 + ": " + csvAttributeValueStringMultimap.get(key0)).append(System.lineSeparator());
+                }*/
+
+        }
+       /* TreeSet<String> stringTreeSet =new TreeSet<>(Arrays.asList(sb.toString().split(System.lineSeparator())));
+        sb = new StringBuilder();
+        for (String string:stringTreeSet) {
+            sb.append(string).append(System.lineSeparator());
+        }*/
+
+        sb = new StringBuilder();
+        for (String key0:matcherFoundCsvAttributeValueStringMultimap.keySet()){
+            for(String key:matcherFoundCsvAttributeValueStringMultimap.get(key0))
+            sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+        }
+        for (String key:notFoundCsvAttributeValueStringMultimap.keySet()){
+            sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
         description = sb.toString().trim();
+        System.out.println(description);
     }
 
     private boolean containsExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
@@ -311,7 +394,8 @@ public class CsvRowObject {
         return sb.toString();
     }
 
-    private String buildCarCategoryAttributeString(ArrayList<String> carCategoryAttributesList) {
+    private String buildCarCategoryAttributeString(TreeSet<String> carCategoryAttributesList) {
+
         StringBuilder sb = new StringBuilder();
         for (String s : carCategoryAttributesList) {
             sb.append(s).append(attributeSeparator);

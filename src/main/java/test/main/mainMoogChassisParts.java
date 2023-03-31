@@ -1,6 +1,6 @@
 package test.main;
 
-import com.opencsv.CSVWriter;
+import utils.csv_Writer;
 import entities.*;
 import entities.attributes_links.ItemPic;
 import entities.objects.CsvRowObject;
@@ -9,22 +9,30 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class mainMoogChassisParts {
     final static String brand="Moog Chassis Parts";
-    final static String[] header = {"id","SKU","itemType","brand","Title"
-            ,"Category","description","imgUrl","ATTRIBUTES"/*,"CarAttributes",
-            "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/
-    };
+
 
     static String csvFilePath="output_"+brand+".csv";
     public static Item newItem;
 
+    //keep 2 apostrophes H7006 ZON7763 53-291387 24-186056 24-324359 24-186728
+    static String partNumber = "'" + "24-186728" + "'";
+
+    static Session session;
+    static  SessionFactory factory;
+    public static void sessionInit() {
+         factory = new Configuration().configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
+                        addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
+                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
+                        addAnnotatedClass(ItemPic.class).
+                        buildSessionFactory();
+         session = factory.getCurrentSession();
+    }
     public static void itemInit() {
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
@@ -48,19 +56,11 @@ public class mainMoogChassisParts {
             factory.close();
         }
     }
-    //keep 2 apostrophes H7006 ZON7763 53-291387 24-186056 24-324359 24-186728
-    static String partNumber = "'" + "24-186728" + "'";
 
     public static void main(String[] args) {
 
         long start = System.currentTimeMillis();
-        SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
-                        addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
-                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
-                        addAnnotatedClass(ItemPic.class).
-                        buildSessionFactory();
-        Session session = factory.getCurrentSession();
+        sessionInit();
 
         int itemsCount=0;
         try {
@@ -102,7 +102,7 @@ public class mainMoogChassisParts {
                 stringArrayList.add(csvRowObject.toStringArray());
             }
 
-            writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
+            csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
 
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -114,7 +114,7 @@ public class mainMoogChassisParts {
         System.out.println(System.getProperty("java.home"));
     }
 
-    public static void writeDataLineByLine(String filePath,String[] data1)
+    /*public static void writeDataLineByLine(String filePath,String[] data1)
     {
         // first create file object for file placed at location
         // specified by filepath
@@ -150,20 +150,17 @@ public class mainMoogChassisParts {
         try {
             // create FileWriter object with file as parameter
             FileWriter outputfile = new FileWriter(file);
-
-            // create CSVWriter with '|' as separator
-            CSVWriter writer = new CSVWriter(outputfile/*, '^',
+            // create CSVWriter with '^' as separator
+            CSVWriter writer = new CSVWriter(outputfile, '^'*//*,
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END*/);
-
+                    CSVWriter.DEFAULT_LINE_END*//*);
             // create a List which contains String array
-            /*List<String[]> data = new ArrayList<String[]>();
+            *//*List<String[]> data = new ArrayList<String[]>();
             data.add(new String[] { "Name", "Class", "Marks" });
             data.add(new String[] { "Aman", "10", "620" });
-            data.add(new String[] { "Suraj", "10", "630" });*/
+            data.add(new String[] { "Suraj", "10", "630" });*//*
             writer.writeAll(data);
-
             // closing writer connection
             writer.close();
         }
@@ -171,6 +168,6 @@ public class mainMoogChassisParts {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

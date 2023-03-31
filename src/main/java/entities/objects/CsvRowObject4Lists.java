@@ -9,6 +9,8 @@ import entities.attributes_links.ItemPic;
 import entities.attributes_links.Item_attributes_link;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CsvRowObject4Lists {
     final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("/", "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
@@ -158,10 +160,21 @@ public class CsvRowObject4Lists {
     }
 
     private void generateItemDescription() {
+        Multimap<String, String> itemCsvAttributeValueStringMultimap = LinkedHashMultimap.create();
+
         StringBuilder sb = new StringBuilder();
         for (String key : csvAttributeValueStringMultimap.keys()) {
-            if ((!sb.toString().contains(key)) && (!checkForExceptions(key, exceptionsForDescArrayList)))
+            if ((!sb.toString().contains(key)) && (!checkForExceptions(key, exceptionsForDescArrayList))){
+                Pattern pattern = Pattern.compile("\\b[a-zA-Z]+\\s[a-zA-Z]+([0-9]{4})[-]([0-9]{4})");
+                Matcher matcher = pattern.matcher(key);
+                if (matcher.find())
+                {
+                    System.out.println(matcher.group(1));
+                }
+                itemCsvAttributeValueStringMultimap.putAll(key,csvAttributeValueStringMultimap.get(key));
+
                 sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+            }
         }
         description = sb.toString().trim();
     }

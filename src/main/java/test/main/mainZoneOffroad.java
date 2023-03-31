@@ -1,6 +1,7 @@
 package test.main;
 
 import com.opencsv.CSVWriter;
+import utils.csv_Writer;
 import entities.*;
 import entities.attributes_links.ItemPic;
 import entities.objects.CsvRowObject;
@@ -8,6 +9,7 @@ import entities.objects.DbObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import utils.hibernate_factory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,6 +26,20 @@ public class mainZoneOffroad {
 
     static String csvFilePath="output_"+brand+".csv";
     public static Item newItem;
+
+    static Session session;
+    static  SessionFactory factory;
+/*
+    public static void sessionInit() {
+        factory = new Configuration().configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
+                        addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
+                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
+                        addAnnotatedClass(ItemPic.class).
+                        buildSessionFactory();
+        session = factory.getCurrentSession();
+    }
+*/
 
     public static void itemInit() {
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
@@ -54,13 +70,18 @@ public class mainZoneOffroad {
     public static void main(String[] args) {
 
         long start = System.currentTimeMillis();
-        SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
+        /*SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
                         addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
                         addAnnotatedClass(ItemPic.class).
                         buildSessionFactory();
-        Session session = factory.getCurrentSession();
+        Session session = factory.getCurrentSession();*/
+
+        new utils.hibernate_factory();
+        hibernate_factory.sessionInit();
+        factory=hibernate_factory.factory;
+        session=hibernate_factory.session;
 
         int itemsCount=0;
         try {
@@ -95,6 +116,7 @@ public class mainZoneOffroad {
                 System.out.println(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
                 System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild)/1000 + " seconds");
+                if (n>19) break;
             }
 
             List<String[]> stringArrayList = new ArrayList<>();
@@ -102,7 +124,7 @@ public class mainZoneOffroad {
                 stringArrayList.add(csvRowObject.toStringArray());
             }
 
-            writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
+            csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
 
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -111,10 +133,10 @@ public class mainZoneOffroad {
         }
 
         System.out.println("Generating CSV for " +itemsCount + " done in " + (System.currentTimeMillis()-start)/1000 + " seconds or " + (System.currentTimeMillis()-start)/60000 + " minutes");
-        System.out.println(System.getProperty("java.home"));
+        //System.out.println(System.getProperty("java.home"));
     }
 
-    public static void writeDataLineByLine(String filePath,String[] data1)
+   /* public static void writeDataLineByLine(String filePath,String[] data1)
     {
         // first create file object for file placed at location
         // specified by filepath
@@ -152,16 +174,16 @@ public class mainZoneOffroad {
             FileWriter outputfile = new FileWriter(file);
 
             // create CSVWriter with '|' as separator
-            CSVWriter writer = new CSVWriter(outputfile/*, '^',
+            CSVWriter writer = new CSVWriter(outputfile*//*, '^',
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END*/);
+                    CSVWriter.DEFAULT_LINE_END*//*);
 
             // create a List which contains String array
-            /*List<String[]> data = new ArrayList<String[]>();
+            *//*List<String[]> data = new ArrayList<String[]>();
             data.add(new String[] { "Name", "Class", "Marks" });
             data.add(new String[] { "Aman", "10", "620" });
-            data.add(new String[] { "Suraj", "10", "630" });*/
+            data.add(new String[] { "Suraj", "10", "630" });*//*
             writer.writeAll(data);
 
             // closing writer connection
@@ -171,6 +193,6 @@ public class mainZoneOffroad {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

@@ -18,16 +18,57 @@ public class CsvRowObject {
     public static class CustomSortComparator implements Comparator<String> {
         @Override
         public int compare(String o1, String o2) {
-            Pattern pattern = Pattern.compile("[a-zA-Z]+[ ][a-zA-Z]+[ ][0-9]{4}[-][0-9]{4}");
+          /*  Pattern pattern = Pattern.compile("[a-zA-Z0-9]+[ ][a-zA-Z0-9]+[ ][0-9]{4}[-][0-9]{4}");
             Matcher matcher1 = pattern.matcher(o1);
             Matcher matcher2 = pattern.matcher(o2);
-            if ( (matcher1.find()) && (matcher2.find()) )
-            if (matcher1.group(0).length() > matcher2.group(0).length()) {
-                return 1;
-            }
-            if (matcher1.group(0).length() < matcher2.group(0).length()) {
-                return -1;
-            }
+           try {
+               if (matcher1.group(0).compareTo(matcher2.group(0)) > 0) {
+                   return 1;
+               }
+               if (matcher1.group(0).compareTo(matcher2.group(0)) < 0) {
+                   return -1;
+               }
+               if (matcher1.group(0).equals(matcher2.group(0)) ) {
+                   pattern = Pattern.compile("[a-zA-Z0-9]+[a-zA-Z0-9]+[ ]a-zA-Z0-9]+[ ][0-9]{4}[-][0-9]{4}");
+                   matcher1 = pattern.matcher(o1);
+                   matcher2 = pattern.matcher(o2);
+                   if (matcher1.group(0).compareTo(matcher2.group(0)) > 0) {
+                       return 1;
+                   }
+                   if (matcher1.group(0).compareTo(matcher2.group(0)) < 0) {
+                       return -1;
+                   }
+                   if (matcher1.group(0).equals(matcher2.group(0))  ) {
+                       pattern = Pattern.compile("[a-zA-Z0-9]+[a-zA-Z0-9]+[a-zA-Z0-9]+[ ][a-zA-Z0-9]+[ ][0-9]{4}[-][0-9]{4}");
+                       matcher1 = pattern.matcher(o1);
+                       matcher2 = pattern.matcher(o2);
+                       if (matcher1.group(0).compareTo(matcher2.group(0)) > 0) {
+                           return 1;
+                       }
+                       if (matcher1.group(0).compareTo(matcher2.group(0)) < 0) {
+                           return -1;
+                       }
+                   }
+               }
+           } catch (IllegalStateException e) {e.printStackTrace();}*/
+               /* for (int i = 0; i < matcher1.group(0).length() - 1; i++) {
+                    if (matcher1.group(0).charAt(i) > matcher2.group(0).charAt(i)) {
+                        return 1;
+                    }
+                    if (matcher1.group(0).charAt(i) < matcher2.group(0).charAt(i)) {
+                        return -1;
+                    }
+                }*/
+
+            String s1=o1.substring(o1.indexOf(" "));
+            String s2=o2.substring(o1.indexOf(" "));
+
+
+            int i = s1.compareTo(s2 );
+            System.out.println(i);
+            if (i!=0) {
+                return i;
+            } else
             return returnCompareBytes(o1, o2);
         }
 
@@ -56,12 +97,12 @@ public class CsvRowObject {
     Multimap<String, String> csvAttributeValueStringMultimap = LinkedHashMultimap.create();
 
     Item item;
-     List<ItemPic> itemPicsList = new ArrayList<>();
-     List<ItemAttribute> itemAttributeList;
-     List<Fitment> fitmentList;
-     List<Car> carList;
-     List<FitmentAttribute> fitmentAttributeList;
-     List<CarAttribute> carAttributeList;
+    List<ItemPic> itemPicsList = new ArrayList<>();
+    List<ItemAttribute> itemAttributeList;
+    List<Fitment> fitmentList;
+    List<Car> carList;
+    List<FitmentAttribute> fitmentAttributeList;
+    List<CarAttribute> carAttributeList;
 
 
     Map<Fitment, Car> mapFitmentCar = new LinkedHashMap<>();
@@ -118,35 +159,35 @@ public class CsvRowObject {
                         && (itemAttribute.getITEM_ATT_ID() == item_attributes_link.getITEM_ATT_ID()))
                     csvRowObject.itemAttributeList.add(itemAttribute);
 
-        for (Fitment fitment:allFitmentList)
-            if(csvRowObject.item.getITEM_ID()==fitment.getITEM_ID())
+        for (Fitment fitment : allFitmentList)
+            if (csvRowObject.item.getITEM_ID() == fitment.getITEM_ID())
                 csvRowObject.fitmentList.add(fitment);
 
-            if(fitmentList!=null) {
-                for (Car car : allCarList)
-                    for (Fitment fitment : fitmentList)
-                        if (fitment.getCAR_ID() == car.getCAR_ID())
-                            csvRowObject.carList.add(car);
+        if (fitmentList != null) {
+            for (Car car : allCarList)
+                for (Fitment fitment : fitmentList)
+                    if (fitment.getCAR_ID() == car.getCAR_ID())
+                        csvRowObject.carList.add(car);
 
 
-                for (Fitment_attributes_link fitment_attributes_link : allfitmentAttributesLinkList)
-                    for (FitmentAttribute fitmentAttribute : allFitmentAttributeList)
-                        if (fitmentAttribute.getFIT_ATT_ID() == fitment_attributes_link.getFIT_ID())
-                            csvRowObject.fitmentAttributeList.add(fitmentAttribute);
+            for (Fitment_attributes_link fitment_attributes_link : allfitmentAttributesLinkList)
+                for (FitmentAttribute fitmentAttribute : allFitmentAttributeList)
+                    if (fitmentAttribute.getFIT_ATT_ID() == fitment_attributes_link.getFIT_ID())
+                        csvRowObject.fitmentAttributeList.add(fitmentAttribute);
 
-                for (Car_attributes_link car_attributes_link : allCarAttributesLinkList)
-                    for (CarAttribute carAttribute : allCarAttributeList)
-                        if (carAttribute.getCAR_ATT_ID() == car_attributes_link.getCAR_ATT_ID())
-                            csvRowObject.carAttributeList.add(carAttribute);
-            }
+            for (Car_attributes_link car_attributes_link : allCarAttributesLinkList)
+                for (CarAttribute carAttribute : allCarAttributeList)
+                    if (carAttribute.getCAR_ATT_ID() == car_attributes_link.getCAR_ATT_ID())
+                        csvRowObject.carAttributeList.add(carAttribute);
+        }
     }
 
     public CsvRowObject(DbObject dbObject) {
-      //  this.id = item.getITEM_ID();
+        //  this.id = item.getITEM_ID();
         this.dbObject = dbObject;
         this.item = dbObject.getItem();
-        this.id=item.getITEM_ID();
-       // System.out.println("Item id when building CsvRowObject = " + id);
+        this.id = item.getITEM_ID();
+        // System.out.println("Item id when building CsvRowObject = " + id);
         this.sku = item.getITEM_PART_NO();
         this.itemType = item.getITEM_TYPE();
         this.brand = item.getITEM_MANUFACTURER();
@@ -165,9 +206,9 @@ public class CsvRowObject {
         carCategoryAttributesList.addAll(generateCarCategoryAttributesList(dbObject.getCarList()));
         TreeSet<String> carMakesTreeSet = new TreeSet<>();
         TreeSet<String> carMakeAndModelTreeSet = new TreeSet<>();
-        for (Car car:dbObject.getCarList()) {
+        for (Car car : dbObject.getCarList()) {
             carMakesTreeSet.add(car.getCAR_MAKE());
-            carMakeAndModelTreeSet.add(car.getCAR_MAKE()+" "+car.getCAR_MODEL());
+            carMakeAndModelTreeSet.add(car.getCAR_MAKE() + " " + car.getCAR_MODEL());
         }
 
         // ToDo: проверить как работают новые carCategories через TreeSet
@@ -203,54 +244,46 @@ public class CsvRowObject {
     private void generateItemDescription() {
         //  sorting by car
         Multimap<String, String> matcherFoundCsvAttributeValueStringMultimap = TreeMultimap.create(
-            new CustomSortComparator(),Comparator.naturalOrder()
+              //  new CustomSortComparator(), Comparator.naturalOrder()
         );
         Multimap<String, String> notFoundCsvAttributeValueStringMultimap = LinkedHashMultimap.create();
 
-        StringBuilder sb = new StringBuilder();
+        //[a-zA-Z0-9\-]
+        //[^ ]+
+        Pattern pattern = Pattern.compile("([ ][0-9]{4}[-][0-9]{4})|([^ ][ ][0-9]{4}[-][0-9]{4})");
         for (String key : csvAttributeValueStringMultimap.keys()) {
-            if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList))) {
-
-                Pattern pattern = Pattern.compile("[a-zA-Z]+[ ][a-zA-Z]+[ ][0-9]{4}[-][0-9]{4}");
-                Matcher matcher = pattern.matcher(key);
-                if (matcher.find()) {
-                 //   System.out.println("matcher.group(0)"+matcher.group(0));
-                    matcherFoundCsvAttributeValueStringMultimap.put(matcher.group(0),key);
-                } else { notFoundCsvAttributeValueStringMultimap.put(key,key); }
-                sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
-                //
+            Matcher matcher = pattern.matcher(key);
+            if (matcher.find()) {
+                //   System.out.println("matcher.group(0)"+matcher.group(0));
+                matcherFoundCsvAttributeValueStringMultimap.put(key.substring(key.indexOf(" ")), key);
+            } else {
+                notFoundCsvAttributeValueStringMultimap.put(key, key);
             }
-            /*TreeSet<String> carKeysSet = new TreeSet<>(matcherFoundCsvAttributeValueStringMultimap.keySet());
-            for (String key2:carKeysSet)
-                    for(String key0: matcherFoundCsvAttributeValueStringMultimap.get(key2) )
-                    for (String key3 : csvAttributeValueStringMultimap.keys()) {
-                        if ((!sb.toString().contains(key0)) && (!containsExceptions(key0, exceptionsForDescArrayList)))
-                            sb.append(key0 + ": " + csvAttributeValueStringMultimap.get(key0)).append(System.lineSeparator());
-                }*/
-
         }
-       /* TreeSet<String> stringTreeSet =new TreeSet<>(Arrays.asList(sb.toString().split(System.lineSeparator())));
-        sb = new StringBuilder();
-        for (String string:stringTreeSet) {
-            sb.append(string).append(System.lineSeparator());
-        }*/
+      //  System.out.println(matcherFoundCsvAttributeValueStringMultimap);
+        StringBuilder sb = new StringBuilder();
 
         sb = new StringBuilder();
-        for (String key0:matcherFoundCsvAttributeValueStringMultimap.keySet()){
-            for(String key:matcherFoundCsvAttributeValueStringMultimap.get(key0))
-            sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+        for (String key : notFoundCsvAttributeValueStringMultimap.keySet()) {
+            if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
+                sb.append(key/*.replace("Position On Vehicle:","PositionOnVehicle")*/ +
+                        ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
-        for (String key:notFoundCsvAttributeValueStringMultimap.keySet()){
-            sb.append(key + ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
+        for (String key0 : matcherFoundCsvAttributeValueStringMultimap.keySet()) {
+            for (String key : matcherFoundCsvAttributeValueStringMultimap.get(key0))
+                if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
+                sb.append(key.replace("Position On Vehicle:","PositionOnVehicle") +
+                        ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
+
         description = sb.toString().trim();
-        System.out.println(description);
+       // System.out.println(description);
     }
 
     private boolean containsExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
         boolean b = false;
         for (String exception : exceptionsStringArrayList) {
-            if ( (!checkedString.contains("http"))&&checkedString.contains(exception))  {
+            if ((!checkedString.contains("http")) && checkedString.contains(exception)) {
                 b = true;
                 break;
             }
@@ -299,9 +332,10 @@ public class CsvRowObject {
 
             double liftStartValue = 0;
             try {
-                Double.parseDouble(csv_LiftStart_AttributeObject.getAttributeValue());
+                liftStartValue = Double.parseDouble(csv_LiftStart_AttributeObject.getAttributeValue());
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
+                liftStartValue = 0;
             }
 
             double liftFinishValue = 0;
@@ -311,7 +345,7 @@ public class CsvRowObject {
                         liftFinishValue = Double.parseDouble(csvAttributeObject.getAttributeValue());
                     } catch (NumberFormatException e) {
                         // e.printStackTrace();
-                        liftFinishValue = 0;
+                         liftFinishValue = 0;
                     }
             }
 
@@ -534,7 +568,7 @@ public class CsvRowObject {
         for (String key : csvAttributeValueStringMultimap.keySet()) {
             int n = 0;
             for (String value : csvAttributeValueStringMultimap.get(key)) {
-                if ( (value.length() < 127) && (!containsExceptions(key, exceptionsForDescArrayList)) )
+                if ((value.length() < 127) && (!containsExceptions(key, exceptionsForDescArrayList)))
                     csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
             }
         }
@@ -547,7 +581,8 @@ public class CsvRowObject {
         stringArray[8] = csvAttributeObjectArrayList.toString().replace("[", "").
                 replace("]", "").replace(";,", ";")
                 .replace("\r\n" + "Material", "")
-                .replaceAll("(\\r|\\n)", "");
+                .replaceAll("(\\r|\\n)", "")
+        .replaceAll("Position On Vehicle:","PositionOnVehicle");
       /*  stringArray[5] = driveAttributeString;
         stringArray[6] = positionAttributeString;
         stringArray[7] = yearAttributeString;

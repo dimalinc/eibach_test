@@ -95,7 +95,7 @@ public class mainKing {
                 System.out.println(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
                 System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
-                if (n>17) break;
+              //  if (n>17) break;
             }
 
             List<String[]> stringArrayList = new ArrayList<>();

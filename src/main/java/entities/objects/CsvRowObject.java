@@ -457,10 +457,24 @@ public class CsvRowObject {
         ArrayList<String> carCategoriesArrayList = new ArrayList<>();
         for (Car car : carArrayList) {
             StringBuilder sb = new StringBuilder();
-            sb.append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ").append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH());
+            sb.append(car.getCAR_MAKE());
             if (!carCategoriesArrayList.contains(sb.toString()))
                 carCategoriesArrayList.add(sb.toString());
+
+            sb=new StringBuilder();
+            sb.append(car.getCAR_MAKE()).append("/").append(car.getCAR_MODEL());
+            if (!carCategoriesArrayList.contains(sb.toString()))
+                carCategoriesArrayList.add(sb.toString());
+
+            sb=new StringBuilder();
+            sb.append(car.getCAR_MAKE()).append("/").
+            append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append("/").
+            append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ").append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH());
+            if (!carCategoriesArrayList.contains(sb.toString()))
+                carCategoriesArrayList.add(sb.toString());
+
         }
+       // System.out.println(carCategoriesArrayList);
         return carCategoriesArrayList;
     }
 
@@ -567,11 +581,18 @@ public class CsvRowObject {
         ArrayList<CsvAttributeObject> csvAttributeObjectArrayList = new ArrayList<>();
         for (String key : csvAttributeValueStringMultimap.keySet()) {
             int n = 0;
-            for (String value : csvAttributeValueStringMultimap.get(key)) {
-                if ((value.length() < 127) && (!containsExceptions(key, exceptionsForDescArrayList)))
-                    csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
-            }
+            for (String value : csvAttributeValueStringMultimap.get(key))
+                try {
+                    if (value != null) {
+                        if ((value.length() < 127) && (!containsExceptions(key, exceptionsForDescArrayList)))
+                            csvAttributeObjectArrayList.add(new CsvAttributeObject(key, value, n++));
+                    } else csvAttributeObjectArrayList.add(new CsvAttributeObject(key, "0", n++));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
         }
+
         /*StringBuilder sb = new StringBuilder();
         for (CsvAttributeObject csvAttributeObject:csvAttributeObjectArrayList){
             sb.append(csvAttributeObject.attributeName).append(": ").append(csvAttributeObject.attributeValue).append(": ") ;
@@ -616,4 +637,5 @@ public class CsvRowObject {
         }
         return stringArray;
     }
+
 }

@@ -1,7 +1,6 @@
 package test.main;
 
 import com.opencsv.CSVWriter;
-import utils.csv_Writer;
 import entities.*;
 import entities.attributes_links.ItemPic;
 import entities.objects.CsvRowObject;
@@ -9,7 +8,6 @@ import entities.objects.DbObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import utils.hibernate_factory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,30 +15,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class mainZoneOffroad {
-    final static String brand="Zone Offroad";
-    final static String imgBrand="zone/";
-    final static String[] header = {"id","SKU","itemType","brand","Title"
-            ,"Category","description","imgUrl","ATTRIBUTES"/*,"CarAttributes",
+public class mainGabriel3 {
+    final static String brand = "Gabriel";
+    final static String[] header = {"id", "SKU", "itemType", "brand", "Title"
+            , "Category", "description", "imgUrl", "ATTRIBUTES"/*,"CarAttributes",
             "item","itemAttribute","carCategory","carCategoryString","csvAttributeObjectArrayList","csvAttributeValueStringMultimap"*/
     };
 
-    static String csvFilePath="output_"+brand+".csv";
+    static String csvFilePath = "output_" + brand + ".csv";
     public static Item newItem;
-
-    static Session session;
-    static  SessionFactory factory;
-/*
-    public static void sessionInit() {
-        factory = new Configuration().configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
-                        addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
-                        addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
-                        addAnnotatedClass(ItemPic.class).
-                        buildSessionFactory();
-        session = factory.getCurrentSession();
-    }
-*/
 
     public static void itemInit() {
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
@@ -65,26 +48,22 @@ public class mainZoneOffroad {
             factory.close();
         }
     }
+
     //keep 2 apostrophes H7006 ZON7763 53-291387 24-186056 24-324359 24-186728
     static String partNumber = "'" + "24-186728" + "'";
 
     public static void main(String[] args) {
 
         long start = System.currentTimeMillis();
-        /*SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
+        SessionFactory factory = new Configuration().configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Car.class).addAnnotatedClass(CarAttribute.class).
                         addAnnotatedClass(Item.class).addAnnotatedClass(ItemAttribute.class).
                         addAnnotatedClass(Fitment.class).addAnnotatedClass(FitmentAttribute.class).
                         addAnnotatedClass(ItemPic.class).
                         buildSessionFactory();
-        Session session = factory.getCurrentSession();*/
+        Session session = factory.getCurrentSession();
 
-        new utils.hibernate_factory();
-        hibernate_factory.sessionInit();
-        factory=hibernate_factory.factory;
-        session=hibernate_factory.session;
-
-        int itemsCount=0;
+        int itemsCount = 0;
         try {
             session.beginTransaction();
           /*  String categoriesQuery = "select * from items where ITEM_ID=999";
@@ -99,33 +78,41 @@ public class mainZoneOffroad {
             // newItem = session.load(Item.class,2);
 
             Long startItemList = System.currentTimeMillis();
-            List<Item> itemList= session.createQuery
-                    ("SELECT a FROM Item a where a.ITEM_MANUFACTURER='"+brand+"'",
+            List<Item> itemList = session.createQuery
+                    ("SELECT a FROM Item a where a.ITEM_MANUFACTURER='" + brand + "'",
                             Item.class).getResultList();
-            itemsCount=itemList.size();
-            System.out.println("Items queried in + " + (System.currentTimeMillis()-startItemList) + "millliseconds");
+            itemsCount = itemList.size();
+            System.out.println("Items queried in + " + (System.currentTimeMillis() - startItemList) + "millliseconds");
 
             ArrayList<CsvRowObject> csvRowObjectArrayList = new ArrayList<>();
-            int n=0;
-            for (Item newItem:itemList) {
+            int n = 0;
+            List<String[]> stringArrayList = new ArrayList<>();
+            int itemNumber = 1120;
+            while (itemNumber<1680) {
+                Item newItem =  itemList.get(itemNumber++);
                 System.out.println(newItem);
-                Long startItemBuild=System.currentTimeMillis();
+                Long startItemBuild = System.currentTimeMillis();
                 DbObject dbObject = new DbObject(newItem);
                 CsvRowObject csvRowObject = new CsvRowObject(dbObject);
                 csvRowObjectArrayList.add(csvRowObject);
                 System.out.println(" * * * * * ");
                 System.out.println(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
-                System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild)/1000 + " seconds");
-               // if (n>19) break;
+                System.out.println("CsvItem build finished in + " +
+                        (System.currentTimeMillis() - startItemBuild) + "millliseconds");
+
+                if (((double) csvRowObjectArrayList.size() % 5 == 0)) {
+                    stringArrayList = new ArrayList<>();
+                    for (CsvRowObject csvRowObjectWrite : csvRowObjectArrayList) {
+                        stringArrayList.add(csvRowObjectWrite.toStringArray());
+                        writeDataForCustomSeparatorCSV("output_3_" + brand + "_" + dbObject.getItem().getITEM_ID()  + ".csv", stringArrayList);
+                    }
+                }
             }
 
-            List<String[]> stringArrayList = new ArrayList<>();
-            for (CsvRowObject csvRowObject:csvRowObjectArrayList){
-                stringArrayList.add(csvRowObject.toStringArray());
-            }
 
-            csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
+            // writeDataForCustomSeparatorCSV("output_"+brand+"_"+arrayListSize+".csv",stringArrayList);
+            writeDataForCustomSeparatorCSV(csvFilePath, stringArrayList);
 
 
         } catch (Exception exc) {
@@ -134,12 +121,11 @@ public class mainZoneOffroad {
             factory.close();
         }
 
-        System.out.println("Generating CSV for " +itemsCount + " done in " + (System.currentTimeMillis()-start)/1000 + " seconds or " + (System.currentTimeMillis()-start)/60000 + " minutes");
-        //System.out.println(System.getProperty("java.home"));
+        System.out.println("Generating CSV for " + itemsCount + " done in " + (System.currentTimeMillis() - start) / 1000 + " seconds or " + (System.currentTimeMillis() - start) / 60000 + " minutes");
+        System.out.println(System.getProperty("java.home"));
     }
 
-   /* public static void writeDataLineByLine(String filePath,String[] data1)
-    {
+    public static void writeDataLineByLine(String filePath, String[] data1) {
         // first create file object for file placed at location
         // specified by filepath
         File file = new File(filePath);
@@ -151,22 +137,20 @@ public class mainZoneOffroad {
             CSVWriter writer = new CSVWriter(outputfile);
 
             // adding header to csv
-              writer.writeNext(header);
+            writer.writeNext(header);
 
             // add data to csv
             writer.writeNext(data1);
 
             // closing writer connection
             writer.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public static void writeDataForCustomSeparatorCSV(String filePath,List<String[]> data)
-    {
+    public static void writeDataForCustomSeparatorCSV(String filePath, List<String[]> data) {
         // first create file object for file placed at location
         // specified by filepath
         File file = new File(filePath);
@@ -176,25 +160,24 @@ public class mainZoneOffroad {
             FileWriter outputfile = new FileWriter(file);
 
             // create CSVWriter with '|' as separator
-            CSVWriter writer = new CSVWriter(outputfile*//*, '^',
+            CSVWriter writer = new CSVWriter(outputfile/*, '^',
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END*//*);
+                    CSVWriter.DEFAULT_LINE_END*/);
 
             // create a List which contains String array
-            *//*List<String[]> data = new ArrayList<String[]>();
+            /*List<String[]> data = new ArrayList<String[]>();
             data.add(new String[] { "Name", "Class", "Marks" });
             data.add(new String[] { "Aman", "10", "620" });
-            data.add(new String[] { "Suraj", "10", "630" });*//*
+            data.add(new String[] { "Suraj", "10", "630" });*/
             writer.writeAll(data);
 
             // closing writer connection
             writer.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }*/
+    }
 
 }

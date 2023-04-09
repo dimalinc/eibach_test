@@ -8,6 +8,7 @@ import entities.attributes_links.Car_attributes_link;
 import entities.attributes_links.Fitment_attributes_link;
 import entities.attributes_links.ItemPic;
 import entities.attributes_links.Item_attributes_link;
+import test.main.prop;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -88,6 +89,24 @@ public class CsvRowObject {
     // TODO: check slash \ import for manuals urls
     final ArrayList<String> charExceptionArrayList = new ArrayList<>(Arrays.asList("null",/*"/",*/ "\\", "$", "&", "%", "<", ">", "*", "#", "'", "\"", "`", "~", "(", ")", "[", "]", "{", "}", "|", "="));
     final ArrayList<String> exceptionsForDescArrayList = new ArrayList<>(Arrays.asList("Start", "Finish", "Full", "Price"));
+    Map<String, String> imgBrandsMap = new HashMap<String, String>() {{
+        put("Bilstein", "bilstein");
+        put("Eibach", "eibach");
+        put("FOX", "fox");
+        put("Fox Racing Shox - Truck & Offroad", "fox");
+        put("Gabriel", "gabriel");
+        put("Icon Vehicle Dynamics", "icon");
+        put("King Shocks", "king");
+        put("Koni", "koni");
+        put("KYB Shocks", "kyb");
+        put("Monroe", "monroe");
+        put("Moog Chassis Parts", "moog");
+        put("Old Man Emu", "ome");
+        put("Pro Comp Suspension", "procomp");
+        put("Rancho", "rancho");
+        put("Skyjacker", "skyjacker");
+        put("Zone Offroad", "zone");
+    }};
 
     private static final String attributeSeparator = "; " /*+ "\r\n"*/;
 
@@ -295,7 +314,7 @@ public class CsvRowObject {
         itemPicsList = item.getItemPicsList();
         StringBuilder sb = new StringBuilder();
         for (ItemPic itemPic : itemPicsList) {
-            sb.append(itemPic.getPIC_URL()).append(attributeSeparator);
+            sb.append(itemPic.getFILE_NAME()).append(attributeSeparator);
         }
         imgUrl = sb.toString().trim();
     }
@@ -577,6 +596,13 @@ public class CsvRowObject {
         stringArray[5] = carCategoryAttributeString;
         stringArray[6] = description;
         stringArray[7] = imgUrl;
+        new test.main.prop();
+
+        int last = Integer.max(imgUrl.lastIndexOf("/"),imgUrl.lastIndexOf("="))+1;
+
+        stringArray[8] = prop.prod_img_link + imgBrandsMap.get(brand)+"/"+ imgUrl.substring(last);
+        stringArray[9] = prop.loc_img_link + imgBrandsMap.get(brand)+"/"+ imgUrl.substring(last);
+        stringArray[10] = prop.dots_img_link + imgBrandsMap.get(brand)+"/" + imgUrl.substring(last);
         // build csv attributes
         ArrayList<CsvAttributeObject> csvAttributeObjectArrayList = new ArrayList<>();
         for (String key : csvAttributeValueStringMultimap.keySet()) {
@@ -599,7 +625,7 @@ public class CsvRowObject {
         }*/
 
         // csvAttributesProcessed
-        stringArray[8] = csvAttributeObjectArrayList.toString().replace("[", "").
+        stringArray[11] = csvAttributeObjectArrayList.toString().replace("[", "").
                 replace("]", "").replace(";,", ";")
                 .replace("\r\n" + "Material", "")
                 .replaceAll("(\\r|\\n)", "")
@@ -609,7 +635,7 @@ public class CsvRowObject {
         stringArray[7] = yearAttributeString;
         stringArray[8] = liftAttributeString;
         stringArray[9] = otherAttributeString;*/
-        stringArray[9] = series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
+        stringArray[12] = series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
        /* stringArray[10] = fitmentList.toString();
         stringArray[11] = mapFitmentFitmentAttributesList.toString();
         stringArray[12] = mapFitmentCar.toString();
@@ -631,7 +657,7 @@ public class CsvRowObject {
         // removing bad symbols
         for (int i = 0; i < stringArray.length; i++) {
             for (String exc : charExceptionArrayList)
-                if ((stringArray[i] != null) && (i != 7))
+                if ((stringArray[i] != null) && (i != 7)&& (i != 8)&& (i != 9)&& (i != 10))
                     // earlier was replaced by _
                     stringArray[i] = stringArray[i].replace(exc, "");
         }

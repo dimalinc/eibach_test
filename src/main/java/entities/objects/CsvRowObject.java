@@ -211,6 +211,8 @@ public class CsvRowObject {
         this.itemType = item.getITEM_TYPE();
         this.brand = item.getITEM_MANUFACTURER();
         itemAttributeList = item.getItemAttributeList();
+
+        this.carList=dbObject.getCarList();
         initLengthMountSeries();
 
         // generating YearAttributesList
@@ -253,6 +255,18 @@ public class CsvRowObject {
         generateItemDescription();
 
         generateTitle();
+
+        generateMakeModelAttributes();
+
+    }
+
+    private void generateMakeModelAttributes(){
+        for (Car car:carList){
+            csvAttributeValueStringMultimap.put("Make", car.getCAR_MAKE());
+            csvAttributeValueStringMultimap.put("Model", car.getCAR_MODEL());
+            csvAttributeValueStringMultimap.put("CarLine", car.getCAR_MAKE()+" "+car.getCAR_MODEL());
+        }
+
 
     }
 

@@ -8,6 +8,7 @@ import entities.objects.DbObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import utils.csv_Writer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -109,8 +110,7 @@ public class mainGabriel500 {
                 }
             }
             // writeDataForCustomSeparatorCSV("output_"+brand+"_"+arrayListSize+".csv",stringArrayList);
-            writeDataForCustomSeparatorCSV(csvFilePath, stringArrayList);
-
+            csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
         } catch (Exception exc) {
             exc.printStackTrace();
         } finally {

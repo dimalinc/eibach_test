@@ -127,7 +127,6 @@ public class mainZoneOffroad {
 
             csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
 
-
         } catch (Exception exc) {
             exc.printStackTrace();
         } finally {

@@ -8,6 +8,7 @@ import entities.objects.DbObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import utils.csv_Writer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -101,19 +102,16 @@ public class mainGabriel2 {
                 System.out.println("CsvItem build finished in + " +
                         (System.currentTimeMillis() - startItemBuild) + "millliseconds");
 
-                if (((double) csvRowObjectArrayList.size() % 5 == 0)) {
+                if (((double) csvRowObjectArrayList.size() % 100 == 0)) {
                     stringArrayList = new ArrayList<>();
                     for (CsvRowObject csvRowObjectWrite : csvRowObjectArrayList) {
                         stringArrayList.add(csvRowObjectWrite.toStringArray());
-                        writeDataForCustomSeparatorCSV("output_2_" + brand + "_" + dbObject.getItem().getITEM_ID()  + ".csv", stringArrayList);
+                        csv_Writer.writeDataForCustomSeparatorCSV("output_2_" + brand + "_" + dbObject.getItem().getITEM_ID()  + ".csv", stringArrayList);
                     }
                 }
             }
-
-
             // writeDataForCustomSeparatorCSV("output_"+brand+"_"+arrayListSize+".csv",stringArrayList);
-            writeDataForCustomSeparatorCSV(csvFilePath, stringArrayList);
-
+            csv_Writer.writeDataForCustomSeparatorCSV("output_2_full" + brand + "_" + ".csv", stringArrayList);
 
         } catch (Exception exc) {
             exc.printStackTrace();

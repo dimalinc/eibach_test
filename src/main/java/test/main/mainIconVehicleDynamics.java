@@ -8,6 +8,7 @@ import entities.objects.DbObject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import utils.csv_Writer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -103,7 +104,7 @@ public class mainIconVehicleDynamics {
                 stringArrayList.add(csvRowObject.toStringArray());
             }
 
-            writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
+            csv_Writer.writeDataForCustomSeparatorCSV(csvFilePath,stringArrayList);
 
         } catch (Exception exc) {
             exc.printStackTrace();

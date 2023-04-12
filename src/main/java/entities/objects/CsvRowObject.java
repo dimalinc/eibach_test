@@ -141,7 +141,7 @@ public class CsvRowObject {
     String title;
 
     ArrayList<String> carCategoryAttributesList = new ArrayList<>();
-    TreeSet<String> carCategoriyAttributesTreeSet = new TreeSet<>();
+    LinkedHashSet<String> carCategoriyAttributesLinkedHashSet = new LinkedHashSet<>();
     String carCategoryAttributeString;
 
     String makeAttributeString;
@@ -225,19 +225,20 @@ public class CsvRowObject {
         yearCsvAttributeObjectsLinkedHashSet = new LinkedHashSet<>(yearCsvAttributeObjectsArrayList);
 
         carCategoryAttributesList.addAll(generateCarCategoryAttributesList(dbObject.getCarList()));
-        TreeSet<String> carMakesTreeSet = new TreeSet<>();
-        TreeSet<String> carMakeAndModelTreeSet = new TreeSet<>();
+        LinkedHashSet<String> carMakesTreeSet = new LinkedHashSet<>();
+        LinkedHashSet<String> carMakeAndModelTreeSet = new LinkedHashSet<>();
         for (Car car : dbObject.getCarList()) {
             carMakesTreeSet.add(car.getCAR_MAKE());
             carMakeAndModelTreeSet.add(car.getCAR_MAKE() + " " + car.getCAR_MODEL());
         }
 
         // ToDo: проверить как работают новые carCategories через TreeSet
-        carCategoriyAttributesTreeSet.addAll(carMakesTreeSet);
-        carCategoriyAttributesTreeSet.addAll(carMakeAndModelTreeSet);
-        carCategoriyAttributesTreeSet.addAll(carCategoryAttributesList);
+        carCategoriyAttributesLinkedHashSet.add(itemType);
+        carCategoriyAttributesLinkedHashSet.addAll(carMakesTreeSet);
+        carCategoriyAttributesLinkedHashSet.addAll(carMakeAndModelTreeSet);
+        carCategoriyAttributesLinkedHashSet.addAll(carCategoryAttributesList);
 
-        carCategoryAttributeString = buildCarCategoryAttributeString(carCategoriyAttributesTreeSet);
+        carCategoryAttributeString = buildCarCategoryAttributeString(carCategoriyAttributesLinkedHashSet);
 
         this.fitmentList = item.getItemFitmentsList();
         mapsInit();
@@ -251,12 +252,10 @@ public class CsvRowObject {
 
         generateItemPicsUrlAttributes();
         // System.out.println("itemPicsList = " + itemPicsList);
-
         generateItemDescription();
-
         generateTitle();
-
         generateMakeModelAttributes();
+        generateItemType();
 
     }
 
@@ -266,8 +265,10 @@ public class CsvRowObject {
             csvAttributeValueStringMultimap.put("Model", car.getCAR_MODEL());
             csvAttributeValueStringMultimap.put("CarLine", car.getCAR_MAKE()+" "+car.getCAR_MODEL());
         }
+    }
 
-
+    private void generateItemType() {
+        csvAttributeValueStringMultimap.put("ItemType",itemType);
     }
 
     private void generateTitle() {
@@ -461,7 +462,7 @@ public class CsvRowObject {
         return sb.toString();
     }
 
-    private String buildCarCategoryAttributeString(TreeSet<String> carCategoryAttributesList) {
+    private String buildCarCategoryAttributeString(LinkedHashSet<String> carCategoryAttributesList) {
 
         StringBuilder sb = new StringBuilder();
         for (String s : carCategoryAttributesList) {
@@ -494,6 +495,7 @@ public class CsvRowObject {
             if (!carCategoriesArrayList.contains(sb.toString()))
                 carCategoriesArrayList.add(sb.toString());
 
+            // set to the top if need to be default category
             sb=new StringBuilder();
             sb.append(car.getCAR_MAKE()).append("/").append(car.getCAR_MODEL());
             if (!carCategoriesArrayList.contains(sb.toString()))
@@ -502,10 +504,9 @@ public class CsvRowObject {
             sb=new StringBuilder();
             sb.append(car.getCAR_MAKE()).append("/").
             append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append("/").
-            append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ").append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH());
+            append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH()).append(" ").append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL());
             if (!carCategoriesArrayList.contains(sb.toString()))
                 carCategoriesArrayList.add(sb.toString());
-
         }
        // System.out.println(carCategoriesArrayList);
         return carCategoriesArrayList;

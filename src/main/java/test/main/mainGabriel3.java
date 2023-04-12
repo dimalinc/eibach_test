@@ -102,7 +102,7 @@ public class mainGabriel3 {
                 System.out.println("CsvItem build finished in + " +
                         (System.currentTimeMillis() - startItemBuild) + "millliseconds");
 
-                if (((double) csvRowObjectArrayList.size() % 5 == 0)) {
+                if (((double) csvRowObjectArrayList.size() % 100 == 0)) {
                     stringArrayList = new ArrayList<>();
                     for (CsvRowObject csvRowObjectWrite : csvRowObjectArrayList) {
                         stringArrayList.add(csvRowObjectWrite.toStringArray());

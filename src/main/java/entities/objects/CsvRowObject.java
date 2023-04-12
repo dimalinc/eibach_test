@@ -297,7 +297,7 @@ public class CsvRowObject {
       //  System.out.println(matcherFoundCsvAttributeValueStringMultimap);
         StringBuilder sb = new StringBuilder();
 
-        sb = new StringBuilder();
+        sb = new StringBuilder(1147483646);
         for (String key : notFoundCsvAttributeValueStringMultimap.keySet()) {
             if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
                 sb.append(key/*.replace("Position On Vehicle:","PositionOnVehicle")*/ +
@@ -310,8 +310,9 @@ public class CsvRowObject {
                         ": " + csvAttributeValueStringMultimap.get(key)).append(System.lineSeparator());
         }
 
-        description = sb.toString().trim();
-       // System.out.println(description);
+        description = sb.toString();
+        System.out.println("description.length()="+description.length());
+        if (description.length()>50000) description=description.substring(0,50000);
     }
 
     private boolean containsExceptions(String checkedString, ArrayList<String> exceptionsStringArrayList) {
@@ -640,17 +641,24 @@ public class CsvRowObject {
         }*/
 
         // csvAttributesProcessed
-        stringArray[11] = csvAttributeObjectArrayList.toString().replace("[", "").
-                replace("]", "").replace(";,", ";")
-                .replace("\r\n" + "Material", "")
-                .replaceAll("(\\r|\\n)", "")
+      //  System.out.println("csvAttributeObjectArrayList toString legnth=" + csvAttributeObjectArrayList.toString().length());
+      //  System.out.println(csvAttributeObjectArrayList.toString());
+        stringArray[11] = csvAttributeObjectArrayList.toString().replaceAll("\\[" , "").
+                replaceAll("]", "").
+                replaceAll(";, ", "; ")
+                .replaceAll("\r\n" + "Material", "")
+             //   .replaceAll("(\\r|\\n)", "")
         .replaceAll("Position On Vehicle:","PositionOnVehicle");
       /*  stringArray[5] = driveAttributeString;
         stringArray[6] = positionAttributeString;
         stringArray[7] = yearAttributeString;
         stringArray[8] = liftAttributeString;
         stringArray[9] = otherAttributeString;*/
-        stringArray[12] = series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
+        String summary=series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
+        String summaryReplace=summary.replaceAll("\r\n","");
+        if (series!=null||upperMount!=null||lowerMount!=null||extendedLength!=null||collapsedLength!=null)
+        stringArray[12] = summary;
+        else stringArray[12]="";
        /* stringArray[10] = fitmentList.toString();
         stringArray[11] = mapFitmentFitmentAttributesList.toString();
         stringArray[12] = mapFitmentCar.toString();

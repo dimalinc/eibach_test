@@ -51,7 +51,8 @@ public class csv_Writer {
             FileWriter outputfile = new FileWriter(file);
             // create CSVWriter with '^' as separator
             CSVWriter writer = new CSVWriter(outputfile, '^'/*,
-                    CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.NO_QUOTE_CHARACTER*//*'n'
+                    CSVWriter.DEFAULT_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                     CSVWriter.DEFAULT_LINE_END*/);
             // create a List which contains String array

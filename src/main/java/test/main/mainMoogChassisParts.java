@@ -92,9 +92,10 @@ public class mainMoogChassisParts {
                 CsvRowObject csvRowObject = new CsvRowObject(dbObject);
                 csvRowObjectArrayList.add(csvRowObject);
                 System.out.println(" * * * * * ");
-                System.out.println(n++ + "___ csvRowObject = ");
+                System.out.print(n++ + "___ csvRowObject = ");
                 // System.out.println(csvRowObject);
                 System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
+                if (n>80) break;
             }
 
             List<String[]> stringArrayList = new ArrayList<>();

@@ -297,7 +297,7 @@ public class CsvRowObject {
       //  System.out.println(matcherFoundCsvAttributeValueStringMultimap);
         StringBuilder sb = new StringBuilder();
 
-        sb = new StringBuilder(1147483646);
+        sb = new StringBuilder(1073741822);
         for (String key : notFoundCsvAttributeValueStringMultimap.keySet()) {
             if ((!sb.toString().contains(key)) && (!containsExceptions(key, exceptionsForDescArrayList)))
                 sb.append(key/*.replace("Position On Vehicle:","PositionOnVehicle")*/ +

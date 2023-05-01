@@ -96,6 +96,7 @@ public class mainSkyjacker {
                 System.out.println(n++ + "___ csvRowObject = ");
                 //  System.out.println(csvRowObject);
                 System.out.println("CsvItem build finished in + " + (System.currentTimeMillis()-startItemBuild) + "millliseconds");
+               // if (n>10) break;
             }
 
             List<String[]> stringArrayList = new ArrayList<>();

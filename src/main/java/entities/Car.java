@@ -456,7 +456,7 @@ public class Car implements Comparable<Car> {
     }
 
     public String getCarLine() {
-        return (CAR_MAKE+" "+CAR_MODEL+" "+YEAR_START+"-"+YEAR_FINISH/*+" "+CAR_DRIVE*/).trim();
+        return (YEAR_START+"-"+YEAR_FINISH+" "+CAR_MAKE+" "+CAR_MODEL/*+" "+CAR_DRIVE*/).trim();
     }
 
 

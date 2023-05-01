@@ -17,7 +17,7 @@ public class ItemAttribute {
     @Column(name = "ITEM_ATT_VALUE")
     private String ITEM_ATT_VALUE;
 
-    @ManyToMany
+    @ManyToMany/*(fetch = FetchType.EAGER)*/
     @JoinTable(name="item_attributes_link",
             joinColumns = @JoinColumn(name="ITEM_ATT_ID"),
             inverseJoinColumns = @JoinColumn(name="ITEM_ID"))

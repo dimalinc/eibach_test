@@ -311,7 +311,7 @@ public class CsvRowObject {
         }
 
         description = sb.toString();
-        System.out.println("description.length()="+description.length());
+       // System.out.println("description.length()="+description.length());
         if (description.length()>50000) description=description.substring(0,50000);
     }
 
@@ -445,7 +445,7 @@ public class CsvRowObject {
                 }
             }
         }
-        System.out.println("* _ * _ * numberOfFitmentAndCarAttributesForOneItem = " + numberOfFitmentAndCarAttributesForOneItem);
+       // System.out.println("* _ * _ * numberOfFitmentAndCarAttributesForOneItem = " + numberOfFitmentAndCarAttributesForOneItem);
     }
 
     private void mapsInit() {
@@ -459,7 +459,9 @@ public class CsvRowObject {
 
     private String generateCarLine(Car car) {
         StringBuilder sb = new StringBuilder();
-        sb.append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ").append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH());
+        sb.append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH()).
+                append(" ").
+                append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL());
         return sb.toString();
     }
 
@@ -477,14 +479,19 @@ public class CsvRowObject {
         for (ItemAttribute itemAttribute : itemAttributeList) {
             if (itemAttribute.getITEM_ATT_NAME().contains("Upper Mount"))
                 upperMount = itemAttribute.getITEM_ATT_VALUE();
+           // else  upperMount="";
             if (itemAttribute.getITEM_ATT_NAME().contains("Lower Mount"))
                 lowerMount = itemAttribute.getITEM_ATT_VALUE();
+          //  else  lowerMount="";
             if (itemAttribute.getITEM_ATT_NAME().contains("Extended Length"))
                 extendedLength = itemAttribute.getITEM_ATT_VALUE();
+          //  else  extendedLength="";
             if (itemAttribute.getITEM_ATT_NAME().contains("Collapsed Length"))
                 collapsedLength = itemAttribute.getITEM_ATT_VALUE();
+         //   else  collapsedLength="";
             if (itemAttribute.getITEM_ATT_NAME().contains("Serie"))
                 series = itemAttribute.getITEM_ATT_VALUE();
+           // else  series="";
         }
     }
 
@@ -504,7 +511,7 @@ public class CsvRowObject {
 
             sb=new StringBuilder();
             sb.append(car.getCAR_MAKE()).append("/").
-            append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append("/").
+            /*append(car.getCAR_MAKE()).append(" ").*/append(car.getCAR_MODEL()).append("/").
             append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH()).append(" ").append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL());
             if (!carCategoriesArrayList.contains(sb.toString()))
                 carCategoriesArrayList.add(sb.toString());
@@ -542,8 +549,8 @@ public class CsvRowObject {
 
     private String generateCarCategoryName(Car car) {
         StringBuilder sb = new StringBuilder();
-        sb.append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ").
-                append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH());
+        sb.append(car.getYEAR_START()).append("-").append(car.getYEAR_FINISH()).append(" ").
+                append(car.getCAR_MAKE()).append(" ").append(car.getCAR_MODEL()).append(" ");
         return sb.toString().trim();
     }
 
@@ -654,11 +661,13 @@ public class CsvRowObject {
         stringArray[7] = yearAttributeString;
         stringArray[8] = liftAttributeString;
         stringArray[9] = otherAttributeString;*/
-        String summary=series + "\r\n" + upperMount + "\r\n" + lowerMount + "\r\n" + extendedLength + "\r\n" + collapsedLength;
+        String summary=/*series + "\r\n" +*/ upperMount + " " + lowerMount + " " + extendedLength + " " + collapsedLength;
         String summaryReplace=summary.replaceAll("\r\n","");
-        if (series!=null||upperMount!=null||lowerMount!=null||extendedLength!=null||collapsedLength!=null)
+       // if (/*series!=null||*/upperMount!=null||lowerMount!=null||extendedLength!=null||collapsedLength!=null)
         stringArray[12] = summary;
-        else stringArray[12]="";
+      //  else stringArray[12]="";
+        // TODO: making deleting summary field. return summary back
+       // stringArray[12]="";
        /* stringArray[10] = fitmentList.toString();
         stringArray[11] = mapFitmentFitmentAttributesList.toString();
         stringArray[12] = mapFitmentCar.toString();
